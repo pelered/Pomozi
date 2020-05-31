@@ -12,4 +12,8 @@
     <string name="menu_slideshow">Slideshow</string>
 
     <string name="home_second">Home Second</string>
+    <string name="facebook_app_id">293713441654119</string>
+    <string name="fb_login_protocol_scheme">fb293713441654119</string>
+    <string name="log_out">Log out</string>
+
 </resources>
