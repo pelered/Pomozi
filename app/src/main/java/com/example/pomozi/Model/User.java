@@ -15,6 +15,22 @@ public class User
     private String grad;
     private String zupanija;
     private String email;
+    private String add;
+    private String tel_broj;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uid='" + uid + '\'' +
+                ", ime='" + ime + '\'' +
+                ", url='" + url + '\'' +
+                ", grad='" + grad + '\'' +
+                ", zupanija='" + zupanija + '\'' +
+                ", email='" + email + '\'' +
+                ", add='" + add + '\'' +
+                ", tel_broj='" + tel_broj + '\'' +
+                '}';
+    }
 
     public String getEmail() {
         return email;
@@ -22,6 +38,17 @@ public class User
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public User(String uid, String ime, String url, String add,String zupanija,  String grad, String email, String tel_broj) {
+        this.uid = uid;
+        this.ime = ime;
+        this.url = url;
+        this.grad = grad;
+        this.zupanija = zupanija;
+        this.email = email;
+        this.add = add;
+        this.tel_broj = tel_broj;
     }
 
     public User(String uid, String ime, String url, String email, String grad, String zupanija) {
@@ -40,6 +67,22 @@ public class User
     }
 
     public User() {
+    }
+
+    public String getAdd() {
+        return add;
+    }
+
+    public void setAdd(String add) {
+        this.add = add;
+    }
+
+    public String getTel_broj() {
+        return tel_broj;
+    }
+
+    public void setTel_broj(String tel_broj) {
+        this.tel_broj = tel_broj;
     }
 
     public String getUid() {
@@ -90,17 +133,8 @@ public class User
         result.put("email",email);
         result.put("grad",grad);
         result.put("zupanija",zupanija);
+        result.put("add",add);
+        result.put("tel_broj",tel_broj);
         return result;
-    }
-    @NonNull
-    @Override
-    public String toString() {
-        return "User{" +
-                "uid='" + uid + '\'' +
-                ", ime='" + ime + '\'' +
-                ", url='" + url + '\'' +
-                ", grad='" + grad + '\'' +
-                ", zupanija='" + zupanija + '\'' +
-                '}';
     }
 }

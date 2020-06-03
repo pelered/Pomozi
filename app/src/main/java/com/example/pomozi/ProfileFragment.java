@@ -1,4 +1,4 @@
-package com.example.pomozi.ui;
+package com.example.pomozi;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +26,7 @@ import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -50,6 +51,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private ArrayList<String> favo=new ArrayList<>();
     //private ZivUpload ziv= new ZivUpload();
     //private List<Item> itemList =new ArrayList<>();
+
+    private TextView log,ime_nav,email_nav;
+
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_profile,container,false);
     }
@@ -95,10 +99,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             mAuth.signOut();
             mGoogleSignInClient.signOut().addOnCompleteListener(Objects.requireNonNull(getActivity()),
                     task -> {
-                        /*Bundle args = new Bundle();
-                        args.putString("oznaka", uploadCurrent.getId());
-                        fragment.setArguments(args);
-                        //FragmentTransaction ft=*/
+
                         FragmentTransaction ft =(getActivity()).getSupportFragmentManager().beginTransaction();
                         ft.replace(R.id.nav_host_fragment, new HomeFragment());
                         //ft.addToBackStack("tag_back1_profile");
@@ -108,6 +109,12 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.clear();
+            NavigationView navigationView =getActivity().findViewById(R.id.nav_view);
+            View headerView = navigationView.getHeaderView(0);
+            ime_nav=headerView.findViewById(R.id.ime_navigation);
+            email_nav=headerView.findViewById(R.id.email_navigation);
+            ime_nav.setText(R.string.nav_header_title);
+            email_nav.setText(R.string.nav_header_subtitle);
             //Log.d("dal izbrise","usao sam");
             editor.commit();
         }else if(view.equals(vrati)){

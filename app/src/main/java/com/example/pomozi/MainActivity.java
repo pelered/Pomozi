@@ -6,9 +6,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.TextView;
 
-import com.example.pomozi.ui.login.LoginFragment;
 import com.example.pomozi.ui.home.HomeFragment;
-import com.example.pomozi.ui.slideshow.SlideshowFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -99,14 +97,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.addToBackStack("tag_back1");
             ft.commit();        }
         else if (id == R.id.nav_gallery) {
-            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, new EditSkl());
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new EditZiv());
             ft.addToBackStack("tag_back3");
-            ft.commit();*/
+            ft.commit();
 
         } else if (id == R.id.nav_slideshow) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment,new SlideshowFragment());
+            ft.replace(R.id.nav_host_fragment,new IspisFragment());
             ft.addToBackStack("tag_back4");
             ft.commit();
 

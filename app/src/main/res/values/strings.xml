@@ -16,4 +16,33 @@
     <string name="fb_login_protocol_scheme">fb293713441654119</string>
     <string name="log_out">Log out</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="registriraj">Registriraj</string>
+    <string name="potvrdi_lozinku">Potvrdi lozinku</string>
+    <string name="lozinka_min_6_znakova">Lozinka min 6 znakova</string>
+    <string name="adresa">Adresa</string>
+    <string name="email">Email</string>
+    <string name="ime_prezime" />
+    <string name="ime_i_prezime">Ime i prezime</string>
+    <string name="grad">Grad</string>
+    <string name="upanija">Županija</string>
+    <string name="broj_mobitela">Broj mobitela</string>
+    <string name="registriraj_se">Registriraj se</string>
+    <string name="log_in">Log in</string>
+    <string name="lozinka">Lozinka</string>
+    <string name="poka_i_lozinku">Pokaži lozinku</string>
+    <string name="odaberi_slike">Odaberi slike</string>
+    <string name="obrisi_slik">Obriši sliku</string>
+    <string name="oznaka" />
+    <string name="uplodaj">Uplodaj</string>
+    <string name="izgubljeno">Izgubljeno</string>
+    <string name="na_eno">Nađeno</string>
+    <string name="ma_ka">Mačka</string>
+    <string name="pas">Pas</string>
+    <string name="ptica">Ptica</string>
+    <string name="zec">Zec</string>
+    <string name="drugo">Drugo</string>
+    <string name="opis">Opis</string>
+
 </resources>
