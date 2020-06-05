@@ -3,6 +3,7 @@ package com.example.pomozi;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -102,8 +103,9 @@ public class EditZiv extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         //iz SharedPref se uzima id jer jedino korisnik logirano može imat ovdje pristup
-        prefs = Objects.requireNonNull(getActivity()).getSharedPreferences("shared_pref_name", MODE_PRIVATE);
-        id_korisnika = prefs.getString("uid", null);
+        prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        id_korisnika = prefs.getString("uid",null);
+        Log.d("onViewCreated",id_korisnika);
         if (id_korisnika==null){
             Toast.makeText(getContext(),"Nisi smio ovo uspjet,javi mi kako",Toast.LENGTH_SHORT).show();
         }
@@ -283,6 +285,7 @@ public class EditZiv extends Fragment {
                 final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
                         + "."+getFileExtension(file) );
                 //Log.d("upload_slika2",fileReference.toString());
+                //TODO ako je mp4 jedan nacin ako je image drugi nacin
                 assert Image != null;
                 if(getFileExtension(file).contains("mp4")){
                     mUploadTask = fileReference.putFile(Uri.fromFile(file));

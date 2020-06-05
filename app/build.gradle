@@ -73,5 +73,8 @@ dependencies {
     final imagePickerVersion = '2.3.1'
     implementation "com.github.esafirm.android-image-picker:imagepicker:${imagePickerVersion}"
 
+    //tabovi
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
+
 
 }

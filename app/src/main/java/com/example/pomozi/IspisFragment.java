@@ -61,6 +61,7 @@ public class IspisFragment extends Fragment {
         if(getArguments()==null){
             Toast.makeText(getContext(),"Nisi smio ovo uspjet,javi mi kako",Toast.LENGTH_SHORT).show();
         }else {
+            //todo srediti id da se opcija brisi javlja samo kada je vlasnik u pitanju
             id_skl=getArguments().getString("id_skl");
         }
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Ziv");
@@ -118,8 +119,6 @@ public class IspisFragment extends Fragment {
 
             });
         }
-
-
     }
 
     private void ucitaj_podatke() {
@@ -130,17 +129,15 @@ public class IspisFragment extends Fragment {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         //Log.d("Ispisujem",postSnapshot.getValue().toString());
                         ZivUpload upload = postSnapshot.getValue(ZivUpload.class);
-                        upload.setKey(postSnapshot.getKey());
-                        assert upload != null;
-                        mUploads.add(upload);
-
+                    assert upload != null;
+                    upload.setKey(postSnapshot.getKey());
+                    mUploads.add(upload);
                 }
                 mAdapter=new IspisAdapterZiv(getActivity(),mUploads);
                 mAdapter = new IspisAdapterZiv(getActivity(), mUploads);
                 mRecyclerView.setAdapter(mAdapter);
                 mProgressCircle.setVisibility(View.INVISIBLE);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(getActivity(), "Neuspjela autorizacija " , Toast.LENGTH_SHORT).show();

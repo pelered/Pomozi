@@ -186,6 +186,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         editor.putString("url","");
         editor.putString("add",user_up.getAdd());
         editor.putBoolean("hasLogin",true);
+        Log.d("onClick::",editor.toString());
         editor.apply();
         NavigationView navigationView =getActivity().findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
@@ -193,8 +194,6 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         email_nav=headerView.findViewById(R.id.email_navigation);
         ime_nav.setText(username);
         email_nav.setText(email);
-
-
         //image with glide
         FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.nav_host_fragment, new ProfileFragment());

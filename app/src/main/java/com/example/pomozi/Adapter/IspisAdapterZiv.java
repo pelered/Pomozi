@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.pomozi.Model.ZivUpload;
+import com.example.pomozi.PrikazZivFragment;
 import com.example.pomozi.R;
 
 
@@ -44,14 +45,14 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
             public void onClick(View v) {
                 Toast.makeText(mContext, "This is item in position " + position, Toast.LENGTH_SHORT).show();
                 //EditZiv fragment=new EditZiv();
-               /* PrikazZiv fragment=new PrikazZiv();
+                PrikazZivFragment fragment=new PrikazZivFragment();
                 Bundle args = new Bundle();
-                args.putString("oznaka", uploadCurrent.getOznaka());
+                args.putString("oznaka", uploadCurrent.getKey());
                 fragment.setArguments(args);
                 FragmentTransaction ft =((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.fragment_container, fragment);
+                ft.replace(R.id.nav_host_fragment, fragment);
                 ft.addToBackStack("tag_ispis");
-                ft.commit();*/
+                ft.commit();
             }
         });
         Log.d("Pisem",uploadCurrent.getUrl().toString());

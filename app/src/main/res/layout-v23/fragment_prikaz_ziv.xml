@@ -8,7 +8,7 @@
 
   <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="match_parent">
 
       <LinearLayout
           android:layout_width="match_parent"
@@ -54,6 +54,7 @@
                   android:layout_gravity="end|bottom"
                   android:clickable="true"
                   android:focusable="true"
+                  android:contentDescription=""
                   tools:ignore="VectorDrawableCompat" />
 
           </androidx.cardview.widget.CardView>
@@ -163,8 +164,7 @@
                   android:layout_weight="1"
                   android:gravity="center"
                   android:scrollIndicators="end"
-                  android:text="@string/opis"
-                  tools:targetApi="m" />
+                  android:text="@string/opis" />
           </LinearLayout>
 
 

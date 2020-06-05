@@ -44,5 +44,11 @@
     <string name="zec">Zec</string>
     <string name="drugo">Drugo</string>
     <string name="opis">Opis</string>
+    <string name="stanje">Stanje</string>
+    <string name="vlasnik">Vlasnik</string>
+    <string name="status">Status</string>
+    <string name="vrsta">vrsta</string>
+    <string name="datum">Datum</string>
+    <string name="zupanija">Zupanija</string>
 
 </resources>

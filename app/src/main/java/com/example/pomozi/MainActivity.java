@@ -1,11 +1,17 @@
 package com.example.pomozi;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.ui.home.HomeFragment;
 import com.google.android.material.navigation.NavigationView;
 
@@ -16,6 +22,9 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import java.text.BreakIterator;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private TextView log;
@@ -37,15 +46,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         View view=navigationView.getHeaderView(0);
         log=view.findViewById(R.id.log_in);
-        log.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.nav_host_fragment, new LoginFragment());
-                ft.addToBackStack("tag_back2");
-                ft.commit();
-            }
+        log.setOnClickListener(v -> {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new LoginFragment());
+            ft.addToBackStack("tag_back2");
+            ft.commit();
         });
+        SharedPreferences prefs = Objects.requireNonNull(this).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        if(prefs.getString("username",null)!=null){
+            TextView ime_nav,email_nav;
+            ImageView profile;
+            profile=view.findViewById(R.id.imageViewprofile);
+            ime_nav = view.findViewById(R.id.ime_navigation);
+            email_nav = view.findViewById(R.id.email_navigation);
+            ime_nav.setText(prefs.getString("username",null));
+            email_nav.setText(prefs.getString("email",null));
+            String url=prefs.getString("url",null);
+            //Log.d("MainA", String.valueOf(profile));
+            if (url!=null) {
+                Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(profile);
+            }
+        }
+
 
     }
     @Override

@@ -163,7 +163,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         String email=user.getEmail();
         String uid=user.getUid();
 
-        user1=new User(uid,username,url,email);
+        user1=new User(uid,username,url,"","","",email,"");
         Task<Void> mDatabaseRef;
         Map<String, Object> postValues2=user1.toMap();
         if(FirebaseDatabase.getInstance().getReference("Kor").child(uid)==null) {
@@ -175,7 +175,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("email", email);
                 editor.putString("username", finalUsername);
-                editor.putString("uid", uid);
+                editor.putString("uid", user1.getUid());
                 editor.putBoolean("hasLogin", true);
                 editor.putString("url", user1.getUrl());
                 Log.d("updateUser()1", user1.toString());
@@ -202,6 +202,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             editor.putString("url", user_dohvati.getUrl());
             Log.d("updateUser()1", user1.toString());
             editor.apply();
+            Log.d("Login::",user_dohvati.toString());
             NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
             ime_nav = headerView.findViewById(R.id.ime_navigation);
@@ -237,7 +238,6 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     //facebook
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d("TAG", "handleFacebookAccessToken:" + token);
-
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
@@ -248,13 +248,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                         //Log.d("Tagfacebook" +                                    "2", String.valueOf(task.getResult().getUser().getPhotoUrl()));
                         //Log.d("Tagfacebook" +                                    "3", task.getResult().getAdditionalUserInfo().getProfile().toString());;
                         FirebaseUser user = mAuth.getCurrentUser();
+                        user_dohvati=new User();
+                        user_dohvati.setEmail(user.getEmail());
+                        user_dohvati.setUid(user.getUid());
+                        user_dohvati.setIme(user.getDisplayName());
                         assert user != null;
                         Log.d("Taguser", user.toString());
                         try {
                             profilePicUrl="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
+                            user_dohvati.setUrl(profilePicUrl);
                             Log.d("Facebook:slika",profilePicUrl);
                         }catch (Exception e)
                         {
+                            user_dohvati.setUrl(user.getPhotoUrl().toString());
                             Log.d("Facebook:error:catch", Objects.requireNonNull(e.getMessage()));
                         }
                         updateUI(user);
@@ -278,6 +284,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("Tag", "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
+                        user_dohvati=new User();
+                        assert user != null;
+                        user_dohvati.setEmail(user.getEmail());
+                        user_dohvati.setIme(user.getDisplayName());
+                        user_dohvati.setUrl(user.getPhotoUrl().toString());
                         updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
