@@ -50,5 +50,8 @@
     <string name="vrsta">vrsta</string>
     <string name="datum">Datum</string>
     <string name="zupanija">Zupanija</string>
+    <string name="pretra_i">Pretraži</string>
+    <string name="Stanjecard">\"Stanje: \"</string>
+
 
 </resources>

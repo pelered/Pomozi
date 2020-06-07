@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
@@ -25,7 +24,6 @@ import android.widget.Toast;
 import com.example.pomozi.Adapter.SliderAdapterExample;
 import com.example.pomozi.Model.Fav;
 import com.example.pomozi.Model.ZivUpload;
-import com.example.pomozi.ui.home.HomeFragment;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.example.pomozi.R;
 
 
 import java.util.List;
+import java.util.Random;
 
 public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageViewHolder>{
     private Context mContext;
@@ -36,14 +38,23 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
         View v = LayoutInflater.from(mContext).inflate(R.layout.card_view_ziv, parent, false);
         return new IspisAdapterZiv.ImageViewHolder(v);
     }
-
+    private String getFileExtension(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
     public void onBindViewHolder(@NonNull final IspisAdapterZiv.ImageViewHolder holder, final int position) {
         final ZivUpload uploadCurrent = mUploads.get(position);
-        holder.textViewName.setText(uploadCurrent.getOpis());
+        holder.textViewName.setText("Status: "+uploadCurrent.getStatus());
+        holder.grad.setText("Grad: " +uploadCurrent.getGrad());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, "This is item in position " + position, Toast.LENGTH_SHORT).show();
+                final int random = new Random().nextInt(100);
+                //Toast.makeText(mContext, "This is item in position " + position, Toast.LENGTH_SHORT).show();
                 //EditZiv fragment=new EditZiv();
                 PrikazZivFragment fragment=new PrikazZivFragment();
                 Bundle args = new Bundle();
@@ -51,11 +62,12 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
                 fragment.setArguments(args);
                 FragmentTransaction ft =((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment, fragment);
-                ft.addToBackStack("tag_ispis");
+                ft.addToBackStack("tag_ispis"+random);
                 ft.commit();
             }
         });
-        Log.d("Pisem",uploadCurrent.getUrl().toString());
+        //Log.d("Pisem",uploadCurrent.getUrl().toString());
+        //Log.d("IspisAda: ",getFileExtension(uploadCurrent.getUrl().get("0_key")));
         if(uploadCurrent.getUrl()!=null){
             Glide.with(mContext)
                     .load(uploadCurrent.getUrl().get("0_key"))
@@ -70,12 +82,13 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
     }
 
     public class ImageViewHolder extends RecyclerView.ViewHolder {
-        public TextView textViewName;
+        public TextView textViewName,grad;
         public ImageView imageView;
         public ImageViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewName = itemView.findViewById(R.id.textView_name);
             imageView = itemView.findViewById(R.id.image_view_upload);
+            grad=itemView.findViewById(R.id.card_grad);
         }
     }
 }

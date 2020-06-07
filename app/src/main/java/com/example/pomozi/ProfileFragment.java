@@ -36,8 +36,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.Adapter.PlaceAutoSuggestAdapter;
 import com.example.pomozi.Adapter.ViewPagerAdapter;
 import com.example.pomozi.Model.User;
-import com.example.pomozi.Model.ZivUpload;
-import com.example.pomozi.ui.home.HomeFragment;
+import com.example.pomozi.Tab.FavFragment;
+import com.example.pomozi.Tab.KomentariFragment;
+import com.example.pomozi.Tab.ObjaveFragment;
 import com.facebook.login.LoginFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -60,8 +61,6 @@ import com.google.firebase.storage.UploadTask;
 import com.sangcomz.fishbun.FishBun;
 import com.sangcomz.fishbun.adapter.image.impl.GlideAdapter;
 import com.sangcomz.fishbun.define.Define;
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private FavFragment favFragment;
     private ObjaveFragment objaveFragment;
     private KomentariFragment komentariFragment;
-    private FirebaseDatabase database;
     private TextView log,ime_nav,email_nav;
     private List<EditText> lista_polja;
     private boolean edit_mode =false;
@@ -109,32 +107,29 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         logout=view.findViewById(R.id.logout);
         edit_profile=view.findViewById(R.id.edit_profile);
         upload=view.findViewById(R.id.uplodaj_profil);
-
         if(getArguments()==null){
+            //ne dolazimo s stranice zivotinje, ali smo registrirani,prikazi nam nas profil
             Log.d("onViewCre::","Argumentnull");
             postavi_vrijednosti(view);
         }else{
             SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
             //Log.d("onViewCre::pref", Objects.requireNonNull(prefs.getString("uid", null)));
-
+            //dolazimo s stranice zivotinje, ali smo registrirani, ujedno provjeravamo jel nas profil to ili tudi
             if(Objects.equals(getArguments().getString("id_vlasnik"), prefs.getString("uid", null))){
                 //uid=getArguments().getString("id_vlasnik");
                 Log.d("onViewCre::",getArguments().getString("id_vlasnik")+";"+prefs.getString("uid",null));
                 postavi_vrijednosti(view);
             }else{
+                //prikazi tudi profil
                 Log.d("onViewCre::", Objects.requireNonNull(getArguments().getString("id_vlasnik")));
-                ucitaj_podatke(view,getArguments().getString("id_vlasnik"));
+                ucitaj_podatke(getArguments().getString("id_vlasnik"));
             }
         }
-
-        //
-
 
 
     }
 
-    private void ucitaj_podatke(View view, String id_vlasnik) {
-
+    private void ucitaj_podatke(String id_vlasnik) {
         DatabaseReference  myRef;
         myRef= FirebaseDatabase.getInstance().getReference("Kor");
         myRef.child(id_vlasnik).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -142,13 +137,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 user_dohvaceno = dataSnapshot.getValue(User.class);
                 prikazi_korisnika();
-
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                Toast.makeText(getActivity(),"Error:"+databaseError.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -159,24 +151,13 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         upload.setVisibility(View.GONE);
         u.setText(user_dohvaceno.getIme());
         e.setText(user_dohvaceno.getEmail());
-        email_sl.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sendEmail();
-            }
-        });
+        email_sl.setOnClickListener(v -> sendEmail());
         if(user_dohvaceno.getTel_broj().equals("")){
             broj.setVisibility(View.GONE);
             tel_sl.setVisibility(View.GONE);
         }else{
             broj.setText(user_dohvaceno.getTel_broj());
-            tel_sl.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    zovi();
-                }
-            });
-
+            tel_sl.setOnClickListener(v -> zovi());
         }
         if(user_dohvaceno.getAdd().equals("")){
             add.setVisibility(View.GONE);
@@ -218,24 +199,15 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
     private void postavi_vrijednosti(View view){
         SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         username=prefs.getString("username",null);
         email=prefs.getString("email",null);
         url=prefs.getString("url","");
         uid=prefs.getString("uid",null);
+        //Log.d("onView_postavi:",uid);
         String add_privremeno=prefs.getString("add","");
-        u=view.findViewById(R.id.username);
-        e=view.findViewById(R.id.email);
-        broj=view.findViewById(R.id.tel_broj);
-        add=view.findViewById(R.id.adresa_profil);
-        grad=view.findViewById(R.id.grad_prof);
-        zup=view.findViewById(R.id.zupanija_prof);
-        logout=view.findViewById(R.id.logout);
-        edit_profile =view.findViewById(R.id.edit_profile);
-        profile_photo=view.findViewById(R.id.photo);
-        edit_profile=view.findViewById(R.id.edit_profile);
+
         if(prefs.getString("tel_broj","").equals("")){
             broj.setText("");
             broj.setVisibility(View.GONE);
@@ -247,7 +219,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         zup.setText(prefs.getString("zupanija",""));
         u.setText(username);
         e.setText(email);
-        upload=view.findViewById(R.id.uplodaj_profil);
+
         upload.setVisibility(View.INVISIBLE);
         lista_polja=new ArrayList();
         lista_polja.add(u);
@@ -286,6 +258,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         mGoogleSignInClient = GoogleSignIn.getClient(Objects.requireNonNull(getActivity()), gso);
 
         //todo dodati toolbar jer ne nestaje ponekad kad treba
+        SharedPreferences prefss = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        Log.d("Profile:",prefss.getString("uid",""));
 
         viewPager = view.findViewById(R.id.view_pager);
         tabLayout = view.findViewById(R.id.tab_layout);
@@ -575,17 +549,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
     public void onStart() {
         super.onStart();
+        //ako ne dolazi s stranice zivotinje i nije regitriran treba se registrirat jer nema sto vidjeti
         if(getArguments()==null){
-            Log.d("onStart::","argument null");
-
+            //Log.d("onStart::","argument null");
             FirebaseUser user=mAuth.getCurrentUser();
             if(user == null){
-                Log.d("onStart::","argument null user isto");
+                //Log.d("onStart::","argument null user isto");
                 FragmentTransaction ft =(Objects.requireNonNull(getActivity())).getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment, new LoginFragment());
-                ft.addToBackStack("tag_back1_profile");
+                //ft.addToBackStack("tag_back1_profile");
                 ft.commit();
-
             }
         }
 

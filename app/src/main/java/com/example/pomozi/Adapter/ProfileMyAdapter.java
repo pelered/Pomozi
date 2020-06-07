@@ -19,6 +19,7 @@ import com.example.pomozi.R;
 
 
 import java.util.List;
+import java.util.Random;
 
 public class ProfileMyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public ProfileMyAdapter(Context context, List<ZivUpload> itemList) {
@@ -50,13 +51,14 @@ public class ProfileMyAdapter extends RecyclerView.Adapter<MyViewHolder> {
         holder.cart_item_name.setText(itemList.get(position).getGrad());
         holder.cart_item_price.setText(itemList.get(position).getOpis());
         holder.itemView.setOnClickListener(v ->{
+            final int random = new Random().nextInt(100);
             PrikazZivFragment fragment=new PrikazZivFragment();
             Bundle args = new Bundle();
             args.putString("oznaka", itemList.get(position).getKey());
             fragment.setArguments(args);
             FragmentTransaction ft =((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, fragment);
-            //ft.addToBackStack("tag_profil_ispis");
+            ft.addToBackStack("tag_profil_ispis"+random);
             ft.commit();
             //Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show();
         });

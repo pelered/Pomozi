@@ -1,4 +1,4 @@
-package com.example.pomozi;
+package com.example.pomozi.Tab;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,6 +9,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -19,8 +21,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.pomozi.Adapter.ProfileMyAdapter;
+import com.example.pomozi.EditZiv;
 import com.example.pomozi.Helper.MySwipeHelper;
 import com.example.pomozi.Model.ZivUpload;
+import com.example.pomozi.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -72,6 +76,19 @@ public class ObjaveFragment extends Fragment {
                             builder.setNegativeButton("No", (dialog, which) -> Toast.makeText(getContext(), "Neće se obrisati", Toast.LENGTH_SHORT).show());
                             builder.show();
                         }));
+                buffer.add(new MyButton(getContext(),"Ažuriraj",30, R.drawable.ic_mode_edit,Color.parseColor("#FFFFFF"),
+                        pos -> {
+                            // Log.d("KliK2: ",  mUploads.get(pos).getOznaka());
+                            EditZiv fragment=new EditZiv();
+                            Bundle args = new Bundle();
+                            args.putString("oznaka", itemList.get(pos).getKey());
+                            fragment.setArguments(args);
+                            FragmentTransaction ft =((FragmentActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.nav_host_fragment, fragment);
+                            ft.addToBackStack("tag_objave_");
+                            ft.commit();
+
+                        }));
             }
         };
         generateItem();
@@ -97,7 +114,7 @@ public class ObjaveFragment extends Fragment {
     private void generateItem() {
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Ziv");
         Query query = ref.orderByChild("id_vlasnika").equalTo(uid);
-        Log.d("Ispisujem0:",query.toString());
+        //Log.d("Ispisujem0:",query.toString());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

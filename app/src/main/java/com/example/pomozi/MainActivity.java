@@ -3,7 +3,6 @@ package com.example.pomozi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.example.pomozi.ui.home.HomeFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -23,7 +21,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import java.text.BreakIterator;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -44,12 +41,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
+        FragmentTransaction ftt = getSupportFragmentManager().beginTransaction();
+        ftt.replace(R.id.nav_host_fragment, new HomeFragment());
+        ftt.commit();
         View view=navigationView.getHeaderView(0);
         log=view.findViewById(R.id.log_in);
         log.setOnClickListener(v -> {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new LoginFragment());
-            ft.addToBackStack("tag_back2");
+            ft.addToBackStack("tag_log");
             ft.commit();
         });
         SharedPreferences prefs = Objects.requireNonNull(this).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ime_nav.setText(prefs.getString("username",null));
             email_nav.setText(prefs.getString("email",null));
             String url=prefs.getString("url",null);
+            log.setText(R.string.log_out);
             //Log.d("MainA", String.valueOf(profile));
             if (url!=null) {
                 Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(profile);
@@ -93,11 +94,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            /*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, new Search());
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new SearchFragment());
             ft.addToBackStack("tag_back_search");
             ft.commit();
-            return true;*/
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -112,23 +113,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.nav_home) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new HomeFragment());
             ft.addToBackStack("tag_back1");
-            ft.commit();        }
+            ft.commit();
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);}
         else if (id == R.id.nav_gallery) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new EditZiv());
             ft.addToBackStack("tag_back3");
             ft.commit();
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
 
         } else if (id == R.id.nav_slideshow) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment,new IspisFragment());
             ft.addToBackStack("tag_back4");
             ft.commit();
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
 
         }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

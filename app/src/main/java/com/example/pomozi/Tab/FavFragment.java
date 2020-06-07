@@ -1,4 +1,4 @@
-package com.example.pomozi;
+package com.example.pomozi.Tab;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +21,7 @@ import com.example.pomozi.Adapter.ProfileMyAdapter;
 import com.example.pomozi.Helper.MySwipeHelper;
 import com.example.pomozi.Model.Fav;
 import com.example.pomozi.Model.ZivUpload;
+import com.example.pomozi.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,8 +51,8 @@ public class FavFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_fav, container, false);
     }
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-        uid=prefs.getString("uid",null);
+        SharedPreferences prefss = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        uid=prefss.getString("uid","");
         recyclerView=view.findViewById(R.id.recycler_test);
         recyclerView.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(getContext());
@@ -104,11 +105,8 @@ public class FavFragment extends Fragment {
 
                                 if (ziv != null) {
                                     ziv.setKey(dataSnapshot.getKey());
-                                    Log.d("generateItem", ziv.toString());
+                                    //Log.d("generateItem", ziv.toString());
                                     itemList.add(ziv);
-
-                                    //Log.d("generateItem2", String.valueOf(itemList.size()));
-                                    //Log.d("generateItem3", String.valueOf(fav1.getFav().size()));
                                     if (itemList.size() == fav1.getFav().size()) {
                                         Log.d("generateItem1", itemList.toString());
                                         adapter = new ProfileMyAdapter(getContext(), itemList);

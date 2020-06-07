@@ -6,42 +6,48 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="10dp"
     app:cardUseCompatPadding="true"
+    android:paddingBottom="2dp"
     app:cardElevation="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_gravity="center">
 
         <ImageView
             android:scaleType="fitXY"
             android:id="@+id/image_view_upload"
             android:layout_width="126dp"
             android:layout_height="98dp"
-
-            android:layout_alignParentTop="true"
             android:layout_marginTop="0dp"
             android:cropToPadding="false" />
 
-        <TextView
-            android:id="@+id/textView_name"
-            android:layout_width="274dp"
-            android:layout_height="68dp"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
 
+            android:gravity="center_vertical">
 
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginLeft="1dp"
-            android:layout_marginTop="22dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_toEndOf="@+id/imageView2"
-            android:layout_toRightOf="@+id/imageView2"
-            android:gravity="left"
-            android:text="Naziv"
-            android:textSize="25sp" />
+            <TextView
+                android:id="@+id/textView_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="@string/stanje"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/card_grad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:text="@string/grad"
+                android:textSize="15sp" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
