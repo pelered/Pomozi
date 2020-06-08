@@ -17,6 +17,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.Model.ZivUpload;
 import com.example.pomozi.PrikazZivFragment;
 import com.example.pomozi.R;
@@ -54,8 +55,7 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
             @Override
             public void onClick(View v) {
                 final int random = new Random().nextInt(100);
-                //Toast.makeText(mContext, "This is item in position " + position, Toast.LENGTH_SHORT).show();
-                //EditZiv fragment=new EditZiv();
+
                 PrikazZivFragment fragment=new PrikazZivFragment();
                 Bundle args = new Bundle();
                 args.putString("oznaka", uploadCurrent.getKey());
@@ -66,14 +66,23 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
                 ft.commit();
             }
         });
-        //Log.d("Pisem",uploadCurrent.getUrl().toString());
-        //Log.d("IspisAda: ",getFileExtension(uploadCurrent.getUrl().get("0_key")));
+
         if(uploadCurrent.getUrl()!=null){
-            Glide.with(mContext)
-                    .load(uploadCurrent.getUrl().get("0_key"))
-                    //.centerCrop()
-                    .optionalFitCenter()
-                    .into(holder.imageView);
+            //Log.d("IspisA:",uploadCurrent.toString());
+            if(uploadCurrent.getUrl().get("0_key").contains("mp4")){
+                RequestOptions requestOptions = new RequestOptions();
+                Glide.with(mContext)
+                        .load(uploadCurrent.getUrl().get("0_key"))
+                        .apply(requestOptions)
+                        .thumbnail(Glide.with(mContext).load(uploadCurrent.getUrl().get("0_key")))
+                        .into(holder.imageView);
+            }else{
+                Glide.with(mContext)
+                        .load(uploadCurrent.getUrl().get("0_key"))
+                        .optionalFitCenter()
+                        .into(holder.imageView);
+            }
+
 
         }
     }

@@ -31,8 +31,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class HomeFragment extends Fragment {
@@ -47,6 +50,9 @@ public class HomeFragment extends Fragment {
     private List<ZivUpload> itemList =new ArrayList<>();
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        if (container != null) {
+            container.removeAllViews();
+        }
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -74,11 +80,12 @@ public class HomeFragment extends Fragment {
 
     private void generateItem() {
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Ziv");
-        Query query = ref.orderByChild("last_date").limitToFirst(20);
+        Query query = ref.orderByChild("last_date").startAt(new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(new Date())).limitToFirst(30);
         //Log.d("Ispisujem0:",query.toString());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                itemList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     if (!grad.equals("")){
                         //Log.d("Ispisujem",postSnapshot.child("grad").getValue().toString());

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".RegisterFragment">
@@ -14,9 +15,15 @@
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:boxBackgroundMode="outline"
+            android:hint="@string/ime_i_prezime"
+            >
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/naziv"
-            android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints=""
@@ -24,16 +31,25 @@
             android:hint="@string/ime_i_prezime"
             android:inputType="text"
             android:paddingBottom="20dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <AutoCompleteTextView
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:boxBackgroundMode="outline"
+            android:hint="@string/adresa"
+            >
+        <com.google.android.material.textview.MaterialAutoCompleteTextView
             android:text=""
 
             android:id="@+id/autocomplete"
-            android:layout_width="300dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:hint="@string/adresa"
             android:paddingBottom="10dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <AutoCompleteTextView
             android:text=""

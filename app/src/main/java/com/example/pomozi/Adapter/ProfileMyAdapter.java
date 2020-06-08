@@ -32,7 +32,7 @@ public class ProfileMyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.item_layout_favorite_ziv,parent,false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.card_view_ziv,parent,false);
 
         return new MyViewHolder(itemView);
     }
@@ -47,9 +47,17 @@ public class ProfileMyAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         Log.d("ProfileMy:",itemList.toString());
-        Glide.with(context).load(itemList.get(position).getUrl().get("0_key")).into(holder.cart_item_img);
-        holder.cart_item_name.setText(itemList.get(position).getGrad());
-        holder.cart_item_price.setText(itemList.get(position).getOpis());
+        holder.textViewName.setText("Status: "+itemList.get(position).getStatus());
+        holder.grad.setText("Grad: " +itemList.get(position).getGrad());
+        if(itemList.get(position).getUrl()!=null){
+            Glide.with(context)
+                    .load(itemList.get(position).getUrl().get("0_key"))
+                    //.centerCrop()
+                    .optionalFitCenter()
+                    .into(holder.imageView);
+
+        }
+
         holder.itemView.setOnClickListener(v ->{
             final int random = new Random().nextInt(100);
             PrikazZivFragment fragment=new PrikazZivFragment();

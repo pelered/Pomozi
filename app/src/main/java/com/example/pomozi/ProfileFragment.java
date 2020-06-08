@@ -117,11 +117,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             //dolazimo s stranice zivotinje, ali smo registrirani, ujedno provjeravamo jel nas profil to ili tudi
             if(Objects.equals(getArguments().getString("id_vlasnik"), prefs.getString("uid", null))){
                 //uid=getArguments().getString("id_vlasnik");
-                Log.d("onViewCre::",getArguments().getString("id_vlasnik")+";"+prefs.getString("uid",null));
+                //Log.d("onViewCre::",getArguments().getString("id_vlasnik")+";"+prefs.getString("uid",null));
                 postavi_vrijednosti(view);
             }else{
                 //prikazi tudi profil
-                Log.d("onViewCre::", Objects.requireNonNull(getArguments().getString("id_vlasnik")));
+                //Log.d("onViewCre::", Objects.requireNonNull(getArguments().getString("id_vlasnik")));
                 ucitaj_podatke(getArguments().getString("id_vlasnik"));
             }
         }
@@ -146,6 +146,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void prikazi_korisnika() {
+        TabLayout tab=getView().findViewById(R.id.tab_layout);
+        tab.setVisibility(View.GONE);
         edit_profile.setVisibility(View.GONE);
         logout.setVisibility(View.GONE);
         upload.setVisibility(View.GONE);
@@ -154,7 +156,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         email_sl.setOnClickListener(v -> sendEmail());
         if(user_dohvaceno.getTel_broj().equals("")){
             broj.setVisibility(View.GONE);
-            tel_sl.setVisibility(View.GONE);
+            tel_sl.setVisibility(View.INVISIBLE);
         }else{
             broj.setText(user_dohvaceno.getTel_broj());
             tel_sl.setOnClickListener(v -> zovi());
@@ -207,10 +209,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         uid=prefs.getString("uid",null);
         //Log.d("onView_postavi:",uid);
         String add_privremeno=prefs.getString("add","");
-
         if(prefs.getString("tel_broj","").equals("")){
             broj.setText("");
             broj.setVisibility(View.GONE);
+            tel_sl.setVisibility(View.GONE);
         }else{
             broj.setText(prefs.getString("tel_broj",""));
         }
@@ -267,12 +269,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         favFragment=new FavFragment();
         objaveFragment=new ObjaveFragment();
         komentariFragment=new KomentariFragment();
+        viewPager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(viewPager);
 
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager(), 0);
-        viewPager.setOffscreenPageLimit(3);
-        viewPagerAdapter.addFragment(favFragment, "Pratim");
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
+
         viewPagerAdapter.addFragment(objaveFragment, "Objave");
+        viewPagerAdapter.addFragment(favFragment, "Pratim");
+
         viewPagerAdapter.addFragment(komentariFragment, "Komentari");
         viewPager.setAdapter(viewPagerAdapter);
     }
@@ -300,7 +304,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             photo_nav=headerView.findViewById(R.id.imageViewprofile);
             ime_nav.setText(R.string.nav_header_title);
             email_nav.setText(R.string.nav_header_subtitle);
-            Glide.with(this).load(R.mipmap.ic_launcher_round).apply(RequestOptions.circleCropTransform()).into(photo_nav);
+            Glide.with(getActivity()).load(R.mipmap.ic_launcher_round).apply(RequestOptions.circleCropTransform()).into(photo_nav);
             log.setText(R.string.log_in);
             //Log.d("dal izbrise","usao sam");
             editor.apply();
@@ -332,7 +336,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     if(lista_polja.get(i).equals(e)) {
                         lista_polja.get(i).setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                     }else if(lista_polja.get(i).equals(broj)){
-                        lista_polja.get(i).setInputType(InputType.TYPE_CLASS_PHONE);
+                        lista_polja.get(i).setInputType(InputType.TYPE_CLASS_NUMBER);
                     }
                     lista_polja.get(i).setInputType(InputType.TYPE_CLASS_TEXT);
                     lista_polja.get(i).setFocusableInTouchMode(true);
@@ -471,7 +475,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         // SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         User user_up=new User(uid,u.getText().toString(),url,add.getText().toString(),zup.getText().toString(),grad.getText().toString(),
                 e.getText().toString(),broj.getText().toString());
-        Log.d("onClick::",user_up.toString());
+        //Log.d("onClick::",user_up.toString());
         myRef= FirebaseDatabase.getInstance().getReference("Kor");
         Map<String, Object> postValues2=user_up.toMap();
         myRef.child(uid).updateChildren(postValues2).addOnSuccessListener(aVoid -> {

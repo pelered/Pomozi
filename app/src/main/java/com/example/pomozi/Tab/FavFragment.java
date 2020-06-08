@@ -39,7 +39,7 @@ public class FavFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProfileMyAdapter adapter;
     private LinearLayoutManager layoutManager;
-    private Fav fav1;
+    private Fav fav1=new Fav();
     private ArrayList<String> favo=new ArrayList<>();
     private ZivUpload ziv= new ZivUpload();
     private List<ZivUpload> itemList =new ArrayList<>();
@@ -89,10 +89,12 @@ public class FavFragment extends Fragment {
     }
     private void generateItem() {
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Fav").child(uid);
-        fav1=new Fav();
+        Log.d("FavF:",ref.toString());
+
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                itemList.clear();
                 fav1=dataSnapshot.getValue(Fav.class);
                 if(fav1!=null) {
                     for(Map.Entry<String, String> entry :fav1.getFav().entrySet()){
@@ -102,14 +104,11 @@ public class FavFragment extends Fragment {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 ziv = dataSnapshot.getValue(ZivUpload.class);
-
                                 if (ziv != null) {
                                     ziv.setKey(dataSnapshot.getKey());
-                                    //Log.d("generateItem", ziv.toString());
                                     itemList.add(ziv);
                                     if (itemList.size() == fav1.getFav().size()) {
-                                        Log.d("generateItem1", itemList.toString());
-                                        adapter = new ProfileMyAdapter(getContext(), itemList);
+                                        adapter = new ProfileMyAdapter(getActivity(), itemList);
                                         recyclerView.setAdapter(adapter);
                                     }
                                 }

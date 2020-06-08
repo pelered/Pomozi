@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,8 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.Model.User;
 import com.example.pomozi.R;
 import com.example.pomozi.RegisterFragment;
@@ -69,6 +72,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     private FirebaseDatabase database;
     private Button login;
     private User user_dohvati;
+    private ImageView profile_photo;
 
 
 
@@ -142,9 +146,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         }
     }
     private void updateUI(FirebaseUser user) {
-
         if(user!=null) {
-            Log.d("Probam3 :", String.valueOf(user));
+            //Log.d("Probam3 :", String.valueOf(user));
             User user1;
             String username = null;
             if (user.getDisplayName() == null) {
@@ -163,13 +166,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             }
             String email = user.getEmail();
             String uid = user.getUid();
-
             user1 = new User(uid, username, url, "", "", "", email, "");
             Task<Void> mDatabaseRef;
             Map<String, Object> postValues2 = user1.toMap();
             if (FirebaseDatabase.getInstance().getReference("Kor").child(uid) == null) {
                 mDatabaseRef = FirebaseDatabase.getInstance().getReference("Kor").child(uid).updateChildren(postValues2);
                 String finalUsername = username;
+                String finalUrl = url;
                 mDatabaseRef.addOnSuccessListener(aVoid -> {
                     SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
@@ -185,15 +188,25 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     email_nav = headerView.findViewById(R.id.email_navigation);
                     ime_nav.setText(finalUsername);
                     email_nav.setText(email);
-                    //image with glide
+                    profile_photo=headerView.findViewById(R.id.imageViewprofile);
+                    log=headerView.findViewById(R.id.log_in);
+                    log.setText(R.string.log_out);
+                    if(finalUrl !=null){
+                        Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
+                    }
+                    ProfileFragment fragment=new ProfileFragment();
+                    //Bundle args = new Bundle();
+                    //args.putString("login", "log");
+                    //fragment.setArguments(args);
                     FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.nav_host_fragment, new ProfileFragment());
+                    ft.replace(R.id.nav_host_fragment, fragment);
                     //ft.addToBackStack("tag_back2");
                     ft.commit();
                 }).addOnFailureListener(e -> Log.d("Neuspjel ", "upload"));
             } else if (FirebaseDatabase.getInstance().getReference("Kor").child(uid) != null || user_dohvati != null) {
                 SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
+                String finalUrl = url;
                 String uid_pri = user_dohvati.getUid();
                 editor.putString("email", user_dohvati.getEmail());
                 editor.putString("username", user_dohvati.getIme());
@@ -208,9 +221,21 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 email_nav = headerView.findViewById(R.id.email_navigation);
                 ime_nav.setText(user_dohvati.getIme());
                 email_nav.setText(user_dohvati.getEmail());
-                //image with glide
+                profile_photo=headerView.findViewById(R.id.imageViewprofile);
+                log=headerView.findViewById(R.id.log_in);
+                log.setText(R.string.log_out);
+                //Log.d("LoginF:",finalUrl);
+                //Log.d("LoginF1:", String.valueOf(profile_photo));
+                if(finalUrl!=null){
+                    Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
+                }
+
+                ProfileFragment fragment=new ProfileFragment();
+                //Bundle args = new Bundle();
+                //args.putString("login", "log");
+                //fragment.setArguments(args);
                 FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.nav_host_fragment, new ProfileFragment());
+                ft.replace(R.id.nav_host_fragment, fragment);
                 ft.commit();
             }
         }else{

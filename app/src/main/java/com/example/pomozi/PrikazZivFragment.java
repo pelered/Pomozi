@@ -172,6 +172,7 @@ public class PrikazZivFragment extends Fragment {
         mDatabaseRef.child(oznaka_ziv).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                slike.clear();
                 odabrana_ziv = dataSnapshot.getValue(ZivUpload.class);
                 //Log.d("dadaj:0", dataSnapshot.getValue().toString());
                 if (dataSnapshot.hasChild("url")) {

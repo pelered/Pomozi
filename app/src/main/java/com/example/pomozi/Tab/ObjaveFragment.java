@@ -43,7 +43,6 @@ public class ObjaveFragment extends Fragment {
     private RecyclerView recyclerViewObjave;
     private ProfileMyAdapter myAdapter;
     private LinearLayoutManager layoutManager;
-
     private ZivUpload ziv= new ZivUpload();
     private List<ZivUpload> itemList =new ArrayList<>();
     private String uid;
@@ -69,11 +68,11 @@ public class ObjaveFragment extends Fragment {
                             builder.setTitle("Potvrda za brisanje");
                             builder.setMessage("Sigurno želite obrisati?");
                             builder.setCancelable(false);
-                            builder.setPositiveButton("Yes", (dialog, which) -> {
+                            builder.setPositiveButton("Da", (dialog, which) -> {
                                 Toast.makeText(getContext(), "You've choosen to delete all records", Toast.LENGTH_SHORT).show();
                                 obrisi_ziv(pos);
                             });
-                            builder.setNegativeButton("No", (dialog, which) -> Toast.makeText(getContext(), "Neće se obrisati", Toast.LENGTH_SHORT).show());
+                            builder.setNegativeButton("Ne", (dialog, which) -> Toast.makeText(getContext(), "Neće se obrisati", Toast.LENGTH_SHORT).show());
                             builder.show();
                         }));
                 buffer.add(new MyButton(getContext(),"Ažuriraj",30, R.drawable.ic_mode_edit,Color.parseColor("#FFFFFF"),
@@ -96,7 +95,7 @@ public class ObjaveFragment extends Fragment {
     private void obrisi_ziv(int pos) {
         for(int i =0; i<itemList.get(pos).getUrl().size();i++){
             int finalI = i;
-            FirebaseStorage.getInstance().getReferenceFromUrl(Objects.requireNonNull(itemList.get(pos).getUrl().get(i + "_key"))).delete().addOnSuccessListener(aVoid -> {
+            FirebaseStorage.getInstance().getReferenceFromUrl(Objects.requireNonNull(itemList.get(pos).getUrl().get(i+"_key"))).delete().addOnSuccessListener(aVoid -> {
                 if (finalI+1==itemList.get(pos).getUrl().size()){
                     FirebaseDatabase.getInstance().getReference("Ziv").child(itemList.get(pos).getKey()).removeValue().addOnSuccessListener(aVoidd -> {
                         Toast.makeText(getContext(),"Uspješno izbrisano",Toast.LENGTH_SHORT).show();
@@ -112,18 +111,16 @@ public class ObjaveFragment extends Fragment {
 
     }
     private void generateItem() {
+
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Ziv");
         Query query = ref.orderByChild("id_vlasnika").equalTo(uid);
-        //Log.d("Ispisujem0:",query.toString());
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Log.d("Ispisujem",postSnapshot.getValue().toString());
                     ziv = postSnapshot.getValue(ZivUpload.class);
                     if (ziv != null) {
                         ziv.setKey(postSnapshot.getKey());
-                        //Log.d("generateItem", ziv.toString());
                         itemList.add(ziv);
                     }
                 }

@@ -77,7 +77,9 @@
                 android:id="@+id/stanje"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:weightSum="0.75">
 
                 <RadioButton
                     android:id="@+id/rjeseno"
@@ -92,13 +94,26 @@
                     android:text="Nerješeno" />
             </RadioGroup>
 
-            <Button
-                android:id="@+id/uplodaj"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:gravity="end"
-                android:text="@string/uplodaj" />
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/uplodaj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:layout_weight="0.25"
+                    android:background="@drawable/buttona"
+                    android:drawableLeft="@drawable/ic_upload"
+                    android:gravity="center"
+                    android:text="@string/uplodaj"
+                    android:textColor="@color/ef_white" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout
@@ -199,12 +214,13 @@
 
         <EditText
             android:id="@+id/opis_ziv"
-            android:layout_width="407dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
 
             android:autofillHints=""
             android:background="@null"
             android:gravity="center"
+            android:layout_gravity="center"
             android:hint="@string/opis"
             android:inputType="textMultiLine" />
     </LinearLayout>

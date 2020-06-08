@@ -3,6 +3,7 @@ package com.example.pomozi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.pomozi.Tab.ObjaveFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.replace(R.id.nav_host_fragment, new LoginFragment());
             ft.addToBackStack("tag_log");
             ft.commit();
+            DrawerLayout drawerr = findViewById(R.id.drawer_layout);
+            drawerr.closeDrawer(GravityCompat.START);
         });
         SharedPreferences prefs = Objects.requireNonNull(this).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         if(prefs.getString("username",null)!=null){
@@ -63,9 +67,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             email_nav.setText(prefs.getString("email",null));
             String url=prefs.getString("url",null);
             log.setText(R.string.log_out);
-            //Log.d("MainA", String.valueOf(profile));
+            Log.d("MainA", String.valueOf(profile));
+            Log.d("MainA1", String.valueOf(url));
             if (url!=null) {
                 Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(profile);
+            }else if(prefs.getString("uid",null)==null){
+                Glide.with(this).load(R.mipmap.ic_launcher_round).apply(RequestOptions.circleCropTransform()).into(profile);
             }
         }
 
@@ -77,7 +84,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (getFragmentManager().getBackStackEntryCount() > 0) {
+                getFragmentManager().popBackStack();
+            } else {
+                super.onBackPressed();
+            }
+            //super.onBackPressed();
         }
     }
     @Override
@@ -130,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else if (id == R.id.nav_slideshow) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment,new IspisFragment());
+            ft.replace(R.id.nav_host_fragment,new ObjaveFragment());
             ft.addToBackStack("tag_back4");
             ft.commit();
             DrawerLayout drawer = findViewById(R.id.drawer_layout);

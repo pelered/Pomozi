@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -151,6 +152,7 @@ public class EditZiv extends Fragment {
             }
         });
         upload.setOnClickListener(v -> {
+
             if (mUploadTask != null && mUploadTask.isInProgress()) {
                 Toast.makeText(getActivity(), "Upload in progress", Toast.LENGTH_SHORT).show();
             } else {
@@ -174,6 +176,7 @@ public class EditZiv extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 //dodajemo sve vrste pasmina
+                slike_ucitavanje.clear();
                 dohvaceno = dataSnapshot.getValue(ZivUpload.class);
                 postavi_vrijednosti();
                 if(dataSnapshot.hasChild("url")){
@@ -250,6 +253,7 @@ public class EditZiv extends Fragment {
     }
     //uplodamo slike i dohvacamorl njihov
     private void uploadFile() {
+        Log.d("upload","Tusam");
         //dohvaca se trenutno prikazan popis slika
         slike_ucitavanje=adapter.getList();
         //da spremimo u hasmapu s hashem vec ucitane slike
@@ -276,19 +280,21 @@ public class EditZiv extends Fragment {
         if (!ImageList.isEmpty()) {
             count=0;
             for (int uploads = 0; uploads < ImageList.size(); uploads++) {
-                //Log.d("upload_slika",ImageList.toString());
                 final Uri Image = ImageList.get(ImageList_key.get(uploads));
-                //Log.d("upload_slika1",Image.toString());
-                File file =new File(String.valueOf(Image));
-                //Log.d("upload_slika1.5", String.valueOf(Uri.fromFile(file)));
-                //mUploadTask = riversRef.putFile(Uri.fromFile(file),metadata);
-                final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
-                        + "."+getFileExtension(file) );
-                //Log.d("upload_slika2",fileReference.toString());
-                //TODO ako je mp4 jedan nacin ako je image drugi nacin
-                assert Image != null;
-                if(getFileExtension(file).contains("mp4")){
-                    mUploadTask = fileReference.putFile(Uri.fromFile(file));
+                final StorageReference fileReference;
+                Boolean video;
+                if(Image.toString().contains("mp4")){
+                    video=true;
+                    fileReference= mStorageRef.child(System.currentTimeMillis()
+                            + "."+getFileExtension(new File(String.valueOf(Image))));
+                }else{
+                    video=false;
+                    fileReference = mStorageRef.child(System.currentTimeMillis()
+                            + "."+getFileExtension(Image));
+                }
+
+                if(video){
+                    mUploadTask = fileReference.putFile(Uri.fromFile(new File(String.valueOf(Image))));
                 }else{
                     mUploadTask = fileReference.putFile(Image);
                 }
@@ -297,7 +303,7 @@ public class EditZiv extends Fragment {
                 // Register observers to listen for when the download is done or if it fails
                 mUploadTask.addOnFailureListener(exception -> Toast.makeText(getActivity(), "Upload nije uspio " + exception.toString(), Toast.LENGTH_LONG).show())
                         .addOnSuccessListener(taskSnapshot -> {
-                    /*Task<Uri> urlTask =*/ mUploadTask.continueWithTask(task -> {
+                     mUploadTask.continueWithTask(task -> {
                         //
                         if (!task.isSuccessful()) {
                             throw Objects.requireNonNull(task.getException());
@@ -336,12 +342,29 @@ public class EditZiv extends Fragment {
 
         new Handler().postDelayed(() -> dodaj_u_bazu_podataka(vec_ucitane,slike_iz_baze), 10000);
     }
-
+    private String getFileExtension(String url) {
+        String type = null;
+        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+        Log.d("upload",extension);
+        if (extension != null) {
+            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        }
+        return type;
+    }
     private static String getFileExtension(File file) {
         String fileName = file.getName();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
             return fileName.substring(fileName.lastIndexOf(".")+1);
         else return "";
+    }
+    //dohvacamo koja vrsta je slika
+    private String getFileExtension(Uri uri) {
+        Log.d("upload_get",uri.toString());
+        ContentResolver cR = Objects.requireNonNull(getActivity()).getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+
+
     }
     //slika se dodajeu bazu podataka , kao i podaci o zivotinji
     private void dodaj_u_bazu_podataka(HashMap<String, String> vec_ucitane, HashMap<String, String> imageList){
@@ -362,24 +385,17 @@ public class EditZiv extends Fragment {
         String last_updated;
         //datum stvaranja, i zadnji update datum
         if(dohvaceno==null){
-            Date date = new Date();
-            Date newDate = new Date(date.getTime() + (604800000L * 2) + (24 * 60 * 60));
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat dt = new SimpleDateFormat("MM-dd-yyyy");
-            created_at = dt.format(newDate);
-            last_updated=dt.format(newDate);
+            created_at = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(new Date());
         }else{
-            Date date = new Date();
-            Date newDate = new Date(date.getTime() + (604800000L * 2) + (24 * 60 * 60));
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat dt = new SimpleDateFormat("MM-dd-yyyy");
             created_at=dohvaceno.getDate();
-            last_updated=dt.format(newDate);
         }
+        last_updated=new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(new Date());
 //String vrsta, String stanje, String status, String adresa, String grad, String zupanija, String opis, String id_vlasnika, String date, String last_date, Map<String, String> url
         //pripremamo za upload
         ZivUpload upload2 = new ZivUpload(id_vrsta.getText().toString(),id_stanje.getText().toString(),
                 id_status.getText().toString(),adres.getText().toString(),grad.getText().toString(),zupanija.getText().toString(),
                 opis.getText().toString(), id_korisnika,created_at,last_updated,slike_map);
-        Log.d("azuriraj:",upload2.toString());
+        //Log.d("azuriraj:",upload2.toString());
         Map<String, Object> postValues2=upload2.toMap();
 
         database= FirebaseDatabase.getInstance();
@@ -397,7 +413,7 @@ public class EditZiv extends Fragment {
                 storageReference.delete().addOnSuccessListener(aVoid -> {
                     //Toast.makeText(getContext(), "Slika izbrisana", Toast.LENGTH_SHORT).show();
                     if((finalI+1)==brisi_slike.size()) {
-                        Log.d("dodajSliku_count:", String.valueOf(finalI));
+                        //Log.d("dodajSliku_count:", String.valueOf(finalI));
 
                         mDatabaseRef.child(key).updateChildren(postValues2).addOnSuccessListener(aVoidd -> {
                             Toast.makeText(getContext(), "Uplodano/Ažurirano", Toast.LENGTH_SHORT).show();
@@ -426,24 +442,7 @@ public class EditZiv extends Fragment {
 
     }
 
-    //dohvacamo koja vrsta je slika
-    private String getFileExtension(Uri uri) {
-        /*ContentResolver cR = Objects.requireNonNull(getActivity()).getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cR.getType(uri));*/
-        Log.d("upload_get",uri.toString());
-        String mimeType = null;
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
-            ContentResolver cr = Objects.requireNonNull(getContext()).getContentResolver();
-            mimeType = cr.getType(uri);
-        } else {
-            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
-                    .toString());
-            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
-                    fileExtension.toLowerCase());
-        }
-        return mimeType;
-    }
+
     private void obrisi() {
         pozicija=sliderView.getCurrentPagePosition();
         //samo nas zanimaju slike koje su vec u bazi podataka/storagu, i ove iz galerije se maknu iz slidera samo se ne dodaju u ovu listu
@@ -463,7 +462,7 @@ public class EditZiv extends Fragment {
         alertDialog.setCanceledOnTouchOutside(false);
         btn_video.setOnClickListener(v -> {
             ImagePicker.create(EditZiv.this)
-                    .returnMode(ReturnMode.ALL) // set whether pick and / or camera action should return immediate result or not.
+                    .returnMode(ReturnMode.GALLERY_ONLY) // set whether pick and / or camera action should return immediate result or not.
                     .folderMode(true) // folder mode (false by default)
                     .toolbarFolderTitle("Folder") // folder selection title
                     .toolbarImageTitle("Tap to select") // image selection title
@@ -471,17 +470,11 @@ public class EditZiv extends Fragment {
                     .includeVideo(true) // Show video on image picker
                     .onlyVideo(true) // include video (false by default)
                     .single() // single mode
-                    //.multi() // multi mode (default mode)
                     .limit(10) // max images can be selected (99 by default)
-                    .showCamera(true) // show camera or not (true by default)
-                    .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
-                    //.excludeFiles(files) // same as exclude but using ArrayList<File>
-                    //.theme(R.style.CustomImagePickerTheme) // must inherit ef_BaseTheme. please refer to sample
+                    .showCamera(false) // show camera or not (true by default)
                     .enableLog(false) // disabling log
                     .start(); // start image picker activity with request code
             alertDialog.dismiss();
-           //Jednog dana za video
-
         });
         btn_slike.setOnClickListener(v -> {
             FishBun.with(EditZiv.this)
@@ -583,7 +576,6 @@ public class EditZiv extends Fragment {
                         targetList.clear();
                     } else {
                         inicijalizirajSlider(targetList);
-
                     }
                 }
                 break;

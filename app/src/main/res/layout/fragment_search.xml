@@ -13,11 +13,13 @@
         android:layout_width="293dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center"
         app:boxBackgroundMode="outline">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/grad_search"
             android:layout_width="293dp"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             android:hint="Grad" />
 

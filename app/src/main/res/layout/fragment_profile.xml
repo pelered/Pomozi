@@ -68,7 +68,6 @@
                         android:id="@+id/send_email"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:background="#FFFFFF"
                         app:srcCompat="@drawable/ic_email_"
                         tools:ignore="VectorDrawableCompat" />
                 </LinearLayout>
@@ -131,8 +130,8 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:layout_height="match_parent"
+
                 android:orientation="vertical"
                 android:weightSum="0.15">
 
@@ -151,20 +150,30 @@
                     android:id="@+id/uplodaj_profil"
                     android:layout_width="68dp"
                     android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:gravity="center"
                     android:text="Upload"
                     android:textSize="10sp"
                     android:textStyle="normal" />
 
-                <Button
-                    android:id="@+id/logout"
-                    android:layout_width="68dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="bottom"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom|end"
+                    android:orientation="vertical">
 
-                    android:gravity="bottom"
-                    android:text="@string/log_out"
-                    android:textSize="10sp"
-                    android:textStyle="normal" />
+                    <Button
+                        android:id="@+id/logout"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="5dp"
+                        android:background="@drawable/ic_log_out"
+                        android:gravity="bottom|end"
+
+                        android:textStyle="normal" />
+                </LinearLayout>
+
             </LinearLayout>
 
 

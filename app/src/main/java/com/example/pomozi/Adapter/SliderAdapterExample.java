@@ -80,17 +80,14 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
     //velicina polja slika
     public void onBindViewHolder(SliderAdapterVH viewHolder, final int position) {
         String link2= path2.get(position);
-        Log.d("onBindV:",link2);
-        //Log.d("onBindV1:", String.valueOf(link2.contains("mp4")));
-        //Log.d("onBindV2:", String.valueOf(!link2.contains("mp4")));
-        //Log.d("onBindV3:",getFileExtension(link2));
 
-        if(getFileExtension(link2)!=null){
-            if(getFileExtension(link2).contains("mp4")) {
+            if(link2.contains("mp4")) {
                 viewHolder.imageViewBackground.setVisibility(View.INVISIBLE);
                 viewHolder.videoViewBackground.setVisibility(View.VISIBLE);
-                viewHolder.controller.show();
+
                 viewHolder.videoViewBackground.setVideoPath(link2);
+                viewHolder.videoViewBackground.seekTo(1);
+                viewHolder.controller.show();
             }else{
                 viewHolder.controller.hide();
                 viewHolder.videoViewBackground.stopPlayback();
@@ -102,17 +99,7 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
                         .centerInside()
                         .into(viewHolder.imageViewBackground);
             }
-        }else{
-            viewHolder.controller.hide();
-            viewHolder.videoViewBackground.stopPlayback();
-            viewHolder.videoViewBackground.setVisibility(View.INVISIBLE);
-            viewHolder.imageViewBackground.setVisibility(View.VISIBLE);
-            Glide.with(viewHolder.itemView)
-                    .load(link2)
-                    .fitCenter()
-                    .centerInside()
-                    .into(viewHolder.imageViewBackground);
-        }
+
         viewHolder.itemView.setOnClickListener(v -> Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show());
     }
     class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
