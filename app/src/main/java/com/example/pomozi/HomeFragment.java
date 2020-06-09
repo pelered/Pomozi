@@ -73,7 +73,11 @@ public class HomeFragment extends Fragment {
                 ft.addToBackStack("home_fragment");
                 ft.commit();
             });
+        }else{
+            dodaj_obajvu=view.findViewById(R.id.dodaj_objavu);
+            dodaj_obajvu.setVisibility(View.GONE);
         }
+
         //Log.d("Home",grad);
         generateItem();
     }

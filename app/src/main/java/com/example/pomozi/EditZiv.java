@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Handler;
 import android.text.TextUtils;
@@ -106,7 +107,7 @@ public class EditZiv extends Fragment {
         //iz SharedPref se uzima id jer jedino korisnik logirano može imat ovdje pristup
         prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         id_korisnika = prefs.getString("uid",null);
-        Log.d("onViewCreated",id_korisnika);
+        //Log.d("onViewCreated",id_korisnika);
         if (id_korisnika==null){
             Toast.makeText(getContext(),"Nisi smio ovo uspjet,javi mi kako",Toast.LENGTH_SHORT).show();
         }
@@ -135,10 +136,6 @@ public class EditZiv extends Fragment {
         progressBar.setVisibility(View.INVISIBLE);
         mStorageRef = FirebaseStorage.getInstance().getReference("Ziv");
         vi=view;
-
-        /*id_vrsta = view.findViewById(vrsta.getCheckedRadioButtonId());
-        id_stanje=view.findViewById(stanje.getCheckedRadioButtonId());
-        id_status=view.findViewById(status.getCheckedRadioButtonId());*/
         vrsta=view.findViewById(R.id.vrsta);
         stanje=view.findViewById(R.id.stanje);
         status=view.findViewById(R.id.status);
@@ -275,7 +272,6 @@ public class EditZiv extends Fragment {
                 }
             }
         }
-        //TODO prvo provjeri dal upisana oznaka vec postoji
         //provjeravamo dal postoje odabrane slike iz galerije
         if (!ImageList.isEmpty()) {
             count=0;
@@ -292,7 +288,6 @@ public class EditZiv extends Fragment {
                     fileReference = mStorageRef.child(System.currentTimeMillis()
                             + "."+getFileExtension(Image));
                 }
-
                 if(video){
                     mUploadTask = fileReference.putFile(Uri.fromFile(new File(String.valueOf(Image))));
                 }else{
@@ -310,22 +305,19 @@ public class EditZiv extends Fragment {
                         }
                         // Continue with the task to get the download URL
                         return fileReference.getDownloadUrl();
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                Uri downloadUri = task.getResult();
-                                Log.d("Upload()uploads ", String.valueOf(count));
-                                //spremam u hash mapu
-                                assert downloadUri != null;
-                                //sprema se link novo spremljenih slika u bazi
-                                slike_iz_baze.put(ImageList_key.get(count).toString(),downloadUri.toString());
-                                count++;
-                                Toast.makeText(getActivity(), "Upload.Dohvacen url: "+count, Toast.LENGTH_LONG).show();
+                    }).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Uri downloadUri = task.getResult();
+                            Log.d("Upload()uploads ", String.valueOf(count));
+                            //spremam u hash mapu
+                            assert downloadUri != null;
+                            //sprema se link novo spremljenih slika u bazi
+                            slike_iz_baze.put(ImageList_key.get(count).toString(),downloadUri.toString());
+                            count++;
+                            //Toast.makeText(getActivity(), "Upload.Dohvacen url: "+count, Toast.LENGTH_LONG).show();
 
-                            } else {
-                                Toast.makeText(getActivity(), "Upload nije uspio", Toast.LENGTH_LONG).show();
-                            }
+                        } else {
+                            Toast.makeText(getActivity(), "Upload nije uspio", Toast.LENGTH_LONG).show();
                         }
                     });
                 }).addOnProgressListener(taskSnapshot -> {
@@ -334,7 +326,7 @@ public class EditZiv extends Fragment {
             }
         } else{
             //ako ne postoje odabrane slike iz galerije samo ponovo zapisujemo već skinute,tj uplodane slike
-            Toast.makeText(getActivity(), "No file selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Nijedna slika nije odabrana", Toast.LENGTH_SHORT).show();
             //zkj slike_map
             slike_map=new HashMap<>(vec_ucitane);
         }
@@ -418,6 +410,15 @@ public class EditZiv extends Fragment {
                         mDatabaseRef.child(key).updateChildren(postValues2).addOnSuccessListener(aVoidd -> {
                             Toast.makeText(getContext(), "Uplodano/Ažurirano", Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE);
+                            PrikazZivFragment fragment=new PrikazZivFragment();
+                            Bundle args = new Bundle();
+                            //Log.d("PrikazZivvlas:",vlasnik.getText().toString());
+                            args.putString("oznaka", key);
+                            fragment.setArguments(args);
+                            FragmentTransaction ft =getActivity().getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.nav_host_fragment, fragment);
+                            //ft.addToBackStack("tag_edit_ziv");
+                            ft.commit();
                         }).addOnFailureListener(e -> {
                             Toast.makeText(getContext(), "Neuspjel pokušaj uplodanja/ažuriranja", Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE);
@@ -432,6 +433,15 @@ public class EditZiv extends Fragment {
             mDatabaseRef.child(key).updateChildren(postValues2).addOnSuccessListener(aVoidd -> {
                 Toast.makeText(getContext(), "Uplodano/Ažurirano", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);
+                PrikazZivFragment fragment=new PrikazZivFragment();
+                Bundle args = new Bundle();
+                //Log.d("PrikazZivvlas:",vlasnik.getText().toString());
+                args.putString("oznaka", key);
+                fragment.setArguments(args);
+                FragmentTransaction ft =getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.nav_host_fragment, fragment);
+                //ft.addToBackStack("tag_edit_ziv");
+                ft.commit();
             }).addOnFailureListener(e -> {
                 Toast.makeText(getContext(), "Neuspjel pokušaj uplodanja/ažuriranja", Toast.LENGTH_SHORT).show();
                 progressBar.setVisibility(View.INVISIBLE);
@@ -522,8 +532,7 @@ public class EditZiv extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent imageData) {
         super.onActivityResult(requestCode, resultCode, imageData);
-        Log.d("onAcitivityResult:", String.valueOf(requestCode)+resultCode+imageData);
-        Log.d("onAcitivityResult:1", String.valueOf(Define.ALBUM_REQUEST_CODE));
+
         switch (requestCode) {
             case Define.ALBUM_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -540,7 +549,6 @@ public class EditZiv extends Fragment {
                         //dodajemo novo odabrane slike u adapter na mjesto na kojem je sliderview bio
                         //kada se odabralo Odaberi slike
                         if (sliderView.getSliderAdapter()!=null){
-                            Log.d("result():", String.valueOf(sliderView.getCurrentPagePosition()));
                             adapter.addItem(targetList, sliderView.getCurrentPagePosition());
                             adapter.notifyDataSetChanged();
                             targetList.clear();

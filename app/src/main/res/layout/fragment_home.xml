@@ -8,18 +8,41 @@
     android:orientation="vertical"
     tools:context=".HomeFragment">
 
-    <Button
-        android:id="@+id/dodaj_objavu"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Objava"
-        android:textSize="15sp"
-        style="Widget.AppCompat.Button.Borderless"
-        android:textColor="#ffffff"
-        app:iconGravity="textStart"
-        android:layout_gravity="center"
-        android:background="@drawable/buttona"
-        android:drawableLeft="@drawable/ic_add_24" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/dodaj_objavu"
+            style="Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/buttona"
+            android:drawableLeft="@drawable/ic_add_24"
+            android:text="Objava"
+            android:textColor="#ffffff"
+            android:textSize="15sp"
+            app:iconGravity="textStart" />
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+
+            android:focusable="false"
+            >
+
+            <AutoCompleteTextView
+                android:text="Grad"
+                android:id="@+id/filled_exposed_dropdown"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_home"
         android:layout_width="match_parent"

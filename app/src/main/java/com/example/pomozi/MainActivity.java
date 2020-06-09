@@ -3,7 +3,6 @@ package com.example.pomozi;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -67,13 +66,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             email_nav.setText(prefs.getString("email",null));
             String url=prefs.getString("url",null);
             log.setText(R.string.log_out);
-            Log.d("MainA", String.valueOf(profile));
-            Log.d("MainA1", String.valueOf(url));
             if (url!=null) {
                 Glide.with(this).load(url).apply(RequestOptions.circleCropTransform()).into(profile);
             }else if(prefs.getString("uid",null)==null){
                 Glide.with(this).load(R.mipmap.ic_launcher_round).apply(RequestOptions.circleCropTransform()).into(profile);
             }
+            Menu menu=navigationView.getMenu();
+            MenuItem item =menu.findItem(R.id.dodaj_objavu);
+            item.setVisible(true);
+            item =menu.findItem(R.id.ispis_objava);
+            item.setVisible(true);
         }
 
 
@@ -132,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.commit();
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);}
-        else if (id == R.id.nav_gallery) {
+        else if (id == R.id.dodaj_objavu) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new EditZiv());
             ft.addToBackStack("tag_back3");
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             DrawerLayout drawer = findViewById(R.id.drawer_layout);
             drawer.closeDrawer(GravityCompat.START);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.ispis_objava) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment,new ObjaveFragment());
             ft.addToBackStack("tag_back4");

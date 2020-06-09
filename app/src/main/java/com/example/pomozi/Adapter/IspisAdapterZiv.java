@@ -51,20 +51,16 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
         final ZivUpload uploadCurrent = mUploads.get(position);
         holder.textViewName.setText("Status: "+uploadCurrent.getStatus());
         holder.grad.setText("Grad: " +uploadCurrent.getGrad());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int random = new Random().nextInt(100);
-
-                PrikazZivFragment fragment=new PrikazZivFragment();
-                Bundle args = new Bundle();
-                args.putString("oznaka", uploadCurrent.getKey());
-                fragment.setArguments(args);
-                FragmentTransaction ft =((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.nav_host_fragment, fragment);
-                ft.addToBackStack("tag_ispis"+random);
-                ft.commit();
-            }
+        holder.itemView.setOnClickListener(v -> {
+            final int random = new Random().nextInt(100);
+            PrikazZivFragment fragment=new PrikazZivFragment();
+            Bundle args = new Bundle();
+            args.putString("oznaka", uploadCurrent.getKey());
+            fragment.setArguments(args);
+            FragmentTransaction ft =((FragmentActivity) mContext).getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, fragment);
+            ft.addToBackStack("tag_ispis"+random);
+            ft.commit();
         });
 
         if(uploadCurrent.getUrl()!=null){

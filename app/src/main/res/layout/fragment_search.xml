@@ -10,27 +10,27 @@
     tools:context=".SearchFragment">
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="293dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:gravity="center"
-        app:boxBackgroundMode="outline">
+        android:gravity="center">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/grad_search"
             android:layout_width="293dp"
-            android:layout_gravity="center"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:hint="Grad" />
 
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="296dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:boxBackgroundMode="outline">
+        android:layout_gravity="center">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/zup_search"
@@ -39,95 +39,115 @@
             android:hint="Županija" />
     </com.google.android.material.textfield.TextInputLayout>
 
-        <RadioGroup
-            android:id="@+id/status_s"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/izgubljeno_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/izgubljeno" />
-
-            <RadioButton
-                android:id="@+id/nadeno"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/na_eno" />
-        </RadioGroup>
-
-        <RadioGroup
-            android:id="@+id/vrsta_s"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/pas_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pas" />
-
-            <RadioButton
-                android:id="@+id/macka_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ma_ka" />
-
-            <RadioButton
-                android:id="@+id/ptica_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/ptica" />
-
-            <RadioButton
-                android:id="@+id/zec_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/zec" />
-
-            <RadioButton
-                android:id="@+id/drugo_s"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/drugo" />
-        </RadioGroup>
-        <RadioGroup
-            android:id="@+id/stanje_s"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_gravity="center">
-
-            <RadioButton
-                android:id="@+id/rjeseno_s"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rješeno" />
-
-            <RadioButton
-                android:id="@+id/nerjeseno_s"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Nerješeno" />
-        </RadioGroup>
-    <Button
-        android:id="@+id/search_s"
+    <RadioGroup
+        android:id="@+id/status_s"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textSize="15sp"
-        app:icon="@drawable/ic_search"
-        app:iconGravity="start"
-        android:text="@string/pretra_i"
-        style="@style/Widget.MaterialComponents.Button.TextButton.Icon"/>
+        android:orientation="horizontal">
 
+        <RadioButton
+            android:id="@+id/izgubljeno_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/izgubljeno" />
+
+        <RadioButton
+            android:id="@+id/nadeno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/na_eno" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/vrsta_s"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/pas_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pas" />
+
+        <RadioButton
+            android:id="@+id/macka_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ma_ka" />
+
+        <RadioButton
+            android:id="@+id/ptica_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ptica" />
+
+        <RadioButton
+            android:id="@+id/zec_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/zec" />
+
+        <RadioButton
+            android:id="@+id/drugo_s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/drugo" />
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/stanje_s"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/rjeseno_s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rješeno" />
+
+        <RadioButton
+            android:id="@+id/nerjeseno_s"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nerješeno" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="278dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/refresh_s"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+
+            android:textSize="15sp"
+            app:icon="@drawable/ic_baseline_refresh_24"
+         />
+
+        <Button
+            android:id="@+id/search_s"
+            style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/pretra_i"
+            android:textSize="15sp"
+            app:icon="@drawable/ic_search"
+            app:iconGravity="start" />
+    </LinearLayout>
 
 
 </LinearLayout>

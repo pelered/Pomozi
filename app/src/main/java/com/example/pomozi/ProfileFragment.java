@@ -15,12 +15,15 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,7 +75,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private String url;
     private EditText u,e,broj;
     private AutoCompleteTextView add,grad,zup;
-    private Button logout, edit_profile,upload;
+    private Button upload;
+    private ImageButton logout, edit_profile;
     private ImageView profile_photo,photo_nav,tel_sl,email_sl;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -306,6 +310,11 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             email_nav.setText(R.string.nav_header_subtitle);
             Glide.with(getActivity()).load(R.mipmap.ic_launcher_round).apply(RequestOptions.circleCropTransform()).into(photo_nav);
             log.setText(R.string.log_in);
+            Menu menu=navigationView.getMenu();
+            MenuItem item =menu.findItem(R.id.dodaj_objavu);
+            item.setVisible(false);
+            item =menu.findItem(R.id.ispis_objava);
+            item.setVisible(false);
             //Log.d("dal izbrise","usao sam");
             editor.apply();
         }else if(view.equals(edit_profile)){
@@ -336,7 +345,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     if(lista_polja.get(i).equals(e)) {
                         lista_polja.get(i).setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                     }else if(lista_polja.get(i).equals(broj)){
-                        lista_polja.get(i).setInputType(InputType.TYPE_CLASS_NUMBER);
+                        lista_polja.get(i).setInputType(InputType.TYPE_CLASS_PHONE);
                     }
                     lista_polja.get(i).setInputType(InputType.TYPE_CLASS_TEXT);
                     lista_polja.get(i).setFocusableInTouchMode(true);
@@ -347,7 +356,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         broj.setVisibility(View.VISIBLE);
                     }
                 }
-                //grad=view.findViewById(R.id.grad_prof);
                 grad.setAdapter(new PlaceAutoSuggestAdapter(getActivity(),android.R.layout.simple_list_item_1));
                 grad.setOnItemClickListener((parent, vieww, position, id) -> {
                     if(grad!=null) {
@@ -492,6 +500,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             editor.putString("add",add.getText().toString());
             editor.putBoolean("hasLogin",true);
             editor.apply();
+            if(!TextUtils.isEmpty(user_up.getTel_broj())){
+                tel_sl.setVisibility(View.VISIBLE);
+            }
             NavigationView navigationView = Objects.requireNonNull(getActivity()).findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
             ime_nav=headerView.findViewById(R.id.ime_navigation);

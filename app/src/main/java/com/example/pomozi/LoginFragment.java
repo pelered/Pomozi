@@ -7,6 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -191,6 +193,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     profile_photo=headerView.findViewById(R.id.imageViewprofile);
                     log=headerView.findViewById(R.id.log_in);
                     log.setText(R.string.log_out);
+                    Menu menu=navigationView.getMenu();
+                    MenuItem item =menu.findItem(R.id.dodaj_objavu);
+                    item.setVisible(true);
+                    item =menu.findItem(R.id.ispis_objava);
+                    item.setVisible(true);
                     if(finalUrl !=null){
                         Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
                     }
@@ -224,6 +231,11 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 profile_photo=headerView.findViewById(R.id.imageViewprofile);
                 log=headerView.findViewById(R.id.log_in);
                 log.setText(R.string.log_out);
+                Menu menu=navigationView.getMenu();
+                MenuItem item =menu.findItem(R.id.dodaj_objavu);
+                item.setVisible(true);
+                item =menu.findItem(R.id.ispis_objava);
+                item.setVisible(true);
                 //Log.d("LoginF:",finalUrl);
                 //Log.d("LoginF1:", String.valueOf(profile_photo));
                 if(finalUrl!=null){

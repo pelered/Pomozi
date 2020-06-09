@@ -135,24 +135,24 @@
                 android:orientation="vertical"
                 android:weightSum="0.15">
 
-                <Button
+                <ImageButton
                     android:id="@+id/edit_profile"
                     android:layout_width="25dp"
                     android:layout_height="26dp"
                     android:layout_gravity="top|end"
-
-                    android:background="@drawable/ic_mode_edit"
+                    android:src="@drawable/ic_mode_edit"
+                    android:background="@drawable/buttona"
                     android:gravity="top|end"
                     android:textSize="15sp"
                     android:textStyle="normal" />
 
                 <Button
                     android:id="@+id/uplodaj_profil"
-                    android:layout_width="68dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="Upload"
+                    android:text="Ažuriraj"
                     android:textSize="10sp"
                     android:textStyle="normal" />
 
@@ -162,14 +162,15 @@
                     android:gravity="bottom|end"
                     android:orientation="vertical">
 
-                    <Button
+                    <ImageButton
+
                         android:id="@+id/logout"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
-                        android:layout_gravity="bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
                         android:layout_marginBottom="5dp"
-                        android:background="@drawable/ic_log_out"
-                        android:gravity="bottom|end"
+                        android:src="@drawable/ic_log_out"
+                        android:background="@drawable/buttona"
 
                         android:textStyle="normal" />
                 </LinearLayout>

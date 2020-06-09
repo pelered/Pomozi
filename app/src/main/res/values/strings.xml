@@ -52,6 +52,11 @@
     <string name="zupanija">Zupanija</string>
     <string name="pretra_i">Pretraži</string>
     <string name="Stanjecard">\"Stanje: \"</string>
+    <string name="slike">Slike</string>
+    <string name="video">Video</string>
+    <string name="po_etna">Početna</string>
+    <string name="nova_objava">Nova objava</string>
+    <string name="moje_objave">Moje objave</string>
 
 
 </resources>

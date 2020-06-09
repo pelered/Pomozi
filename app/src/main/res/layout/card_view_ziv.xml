@@ -22,6 +22,7 @@
             android:layout_width="126dp"
             android:layout_height="98dp"
             android:layout_marginTop="0dp"
+            android:layout_marginRight="5dp"
             android:cropToPadding="false" />
 
         <LinearLayout
@@ -29,13 +30,13 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
 
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp">
 
             <TextView
                 android:id="@+id/textView_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:text="@string/stanje"
                 android:textSize="15sp" />
 
@@ -43,7 +44,6 @@
                 android:id="@+id/card_grad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-
                 android:text="@string/grad"
                 android:textSize="15sp" />
         </LinearLayout>

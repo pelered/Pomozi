@@ -86,7 +86,7 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
                 viewHolder.videoViewBackground.setVisibility(View.VISIBLE);
 
                 viewHolder.videoViewBackground.setVideoPath(link2);
-                viewHolder.videoViewBackground.seekTo(1);
+                //viewHolder.videoViewBackground.seekTo(1);
                 viewHolder.controller.show();
             }else{
                 viewHolder.controller.hide();
@@ -100,7 +100,7 @@ public class SliderAdapterExample extends SliderViewAdapter<SliderAdapterExample
                         .into(viewHolder.imageViewBackground);
             }
 
-        viewHolder.itemView.setOnClickListener(v -> Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show());
+        //viewHolder.itemView.setOnClickListener(v -> /*Toast.makeText(context, "This is item in position " + position, Toast.LENGTH_SHORT).show()*/);
     }
     class SliderAdapterVH extends SliderViewAdapter.ViewHolder {
         View itemView;

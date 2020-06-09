@@ -24,7 +24,7 @@ public class SearchFragment extends Fragment {
     private EditText grad,zupanija;
     private RadioGroup stanje,status,vrsta;
     private RadioButton id_vrsta,id_stanje,id_status;
-    private Button search;
+    private Button search,refresh;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,6 +38,17 @@ public class SearchFragment extends Fragment {
         search=view.findViewById(R.id.search_s);
         grad=view.findViewById(R.id.grad_search);
         zupanija=view.findViewById(R.id.zup_search);
+        refresh=view.findViewById(R.id.refresh_s);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                grad.getText().clear();
+                zupanija.getText().clear();
+                stanje.clearCheck();
+                status.clearCheck();
+                vrsta.clearCheck();
+            }
+        });
         search.setOnClickListener(v -> {
             IspisFragment fragment=new IspisFragment();
             Bundle args = new Bundle();

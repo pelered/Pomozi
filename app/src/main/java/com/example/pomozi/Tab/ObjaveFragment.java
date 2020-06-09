@@ -75,7 +75,7 @@ public class ObjaveFragment extends Fragment {
                             builder.setNegativeButton("Ne", (dialog, which) -> Toast.makeText(getContext(), "Neće se obrisati", Toast.LENGTH_SHORT).show());
                             builder.show();
                         }));
-                buffer.add(new MyButton(getContext(),"Ažuriraj",30, R.drawable.ic_mode_edit,Color.parseColor("#FFFFFF"),
+                buffer.add(new MyButton(getContext(),"Ažuriraj",30, R.drawable.ic_edit_objava,Color.parseColor("#FFFFFF"),
                         pos -> {
                             // Log.d("KliK2: ",  mUploads.get(pos).getOznaka());
                             EditZiv fragment=new EditZiv();
@@ -117,6 +117,7 @@ public class ObjaveFragment extends Fragment {
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                itemList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     ziv = postSnapshot.getValue(ZivUpload.class);
                     if (ziv != null) {

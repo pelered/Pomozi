@@ -21,8 +21,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.Adapter.SliderAdapterExample;
 import com.example.pomozi.Model.Fav;
+import com.example.pomozi.Model.User;
 import com.example.pomozi.Model.ZivUpload;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,11 +50,12 @@ public class PrikazZivFragment extends Fragment {
     private ZivUpload odabrana_ziv;
     private TextView stanje,opis,vlasnik, datumi, adresa,status,vrsta, grad, zupanija;
     private ArrayList<String> slike= new ArrayList<>();
-    private ImageView favorite;
+    private ImageView favorite,profil;
     private boolean oznacen_fav=false;
     private String uid;
-    ArrayList<String> favo;
-    Fav fav1;
+    private ArrayList<String> favo;
+    private Fav fav1;
+    private User user;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,7 +69,7 @@ public class PrikazZivFragment extends Fragment {
         if (getArguments()==null){
             Toast.makeText(getContext(),"Nisi smio ovo uspjet,javi mi kako",Toast.LENGTH_SHORT).show();
         }else{
-            Toast.makeText(getContext(),"Oznaka: "+getArguments().getString("oznaka"),Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(),"Oznaka: "+getArguments().getString("oznaka"),Toast.LENGTH_SHORT).show();
             oznaka_ziv= getArguments().getString("oznaka");
         }
         database=FirebaseDatabase.getInstance();
@@ -82,13 +86,14 @@ public class PrikazZivFragment extends Fragment {
         sliderView1=view.findViewById(R.id.imageSlider);
         favorite=view.findViewById(R.id.favorite);
         favorite.setVisibility(View.INVISIBLE);
+        profil=view.findViewById(R.id.profile_prikaz);
         vlasnik.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ProfileFragment fragment=new ProfileFragment();
                 Bundle args = new Bundle();
                 //Log.d("PrikazZivvlas:",vlasnik.getText().toString());
-                args.putString("id_vlasnik", vlasnik.getText().toString());
+                args.putString("id_vlasnik", user.getUid());
                 fragment.setArguments(args);
                 FragmentTransaction ft =getActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment, fragment);
@@ -182,10 +187,25 @@ public class PrikazZivFragment extends Fragment {
                 }
 
                 odabrana_ziv.setKey(dataSnapshot.getKey());
+                DatabaseReference refe = FirebaseDatabase.getInstance().getReference("Kor").child(odabrana_ziv.getId_vlasnika());
+                Log.d("PrikazZiv:user",refe.toString());
+                refe.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        user=dataSnapshot.getValue(User.class);
+                        Log.d("PrikazZiv:user",user.toString());
+                        postavi_podatke();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Log.d("onCancelled:kor: ", databaseError.getMessage());
+                    }
+                });
                 if (uid != null){
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Fav").child(uid);
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Fav").child(uid);
                 //todo mozda queryy dodati da konkretno nađe po key zivotinje
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                ref.addListenerForSingleValueEvent(new ValueEventListener(){
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         fav1 = dataSnapshot.getValue(Fav.class);
@@ -206,8 +226,10 @@ public class PrikazZivFragment extends Fragment {
                         Log.d("onCancelled:fav: ", databaseError.getMessage());
                     }
                 });
+
             }
-                postavi_podatke();
+
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -219,8 +241,12 @@ public class PrikazZivFragment extends Fragment {
 
     @SuppressLint("SetTextI18n")
     private void postavi_podatke() {
+
         stanje.setText("Stanje: "+odabrana_ziv.getStanje());
-        vlasnik.setText(odabrana_ziv.getId_vlasnika());
+        vlasnik.setText(user.getIme());
+        if(!user.getUrl().equals("")){
+            Glide.with(this).load(user.getUrl()).apply(RequestOptions.circleCropTransform()).into(profil);
+        }
         grad.setText("Grad: "+odabrana_ziv.getGrad());
         datumi.setText("Stvoren: "+odabrana_ziv.getDate()+" Ažurirano: "+odabrana_ziv.getLast_date());
         status.setText("Status: "+odabrana_ziv.getStatus());
