@@ -178,7 +178,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
         }
         String email=user.getEmail();
         String uid=user.getUid();
-        SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("email",email);
         editor.putString("username", username);
@@ -204,8 +204,10 @@ public class RegisterFragment extends Fragment implements View.OnClickListener{
         item.setVisible(true);
         item =menu.findItem(R.id.ispis_objava);
         item.setVisible(true);
+        item =menu.findItem(R.id.moj_profil);
+        item.setVisible(true);
         //image with glide
-        FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.nav_host_fragment, new ProfileFragment());
         ft.commit();
 

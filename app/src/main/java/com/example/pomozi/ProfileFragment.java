@@ -1,6 +1,7 @@
 package com.example.pomozi;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +23,6 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -41,8 +41,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.Adapter.PlaceAutoSuggestAdapter;
 import com.example.pomozi.Adapter.ViewPagerAdapter;
 import com.example.pomozi.Model.User;
+import com.example.pomozi.Service.MyService;
 import com.example.pomozi.Tab.FavFragment;
-import com.example.pomozi.Tab.KomentariFragment;
 import com.example.pomozi.Tab.ObjaveFragment;
 import com.facebook.login.LoginFragment;
 import com.facebook.login.LoginManager;
@@ -87,7 +87,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private TabLayout tabLayout;
     private FavFragment favFragment;
     private ObjaveFragment objaveFragment;
-    private KomentariFragment komentariFragment;
     private TextView log,ime_nav,email_nav;
     private List<EditText> lista_polja;
     private boolean edit_mode =false;
@@ -95,6 +94,9 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private User user_dohvaceno;
     private Switch aSwitch;
 
+
+    Intent mTimerServiceIntent;
+    private MyService mService;
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_profile,container,false);
@@ -115,23 +117,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         edit_profile=view.findViewById(R.id.edit_profile);
         upload=view.findViewById(R.id.uplodaj_profil);
         aSwitch=view.findViewById(R.id.prati_not);
-        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    Log.d("ProfileF","On");
-                } else {
-                    Log.d("ProfileF","Off");
-                    // The toggle is disabled
-                }
-            }
-        });
+        ///
+        System.out.println("****** [MainActivity] onCreate: initializing service intent...");
+        mService = new MyService();
+        mTimerServiceIntent = new Intent(getActivity(), mService.getClass());
         if(getArguments()==null){
             //ne dolazimo s stranice zivotinje, ali smo registrirani,prikazi nam nas profil
             Log.d("onViewCre::","Argumentnull");
             postavi_vrijednosti(view);
         }else{
-            SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+            SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
             //Log.d("onViewCre::pref", Objects.requireNonNull(prefs.getString("uid", null)));
             //dolazimo s stranice zivotinje, ali smo registrirani, ujedno provjeravamo jel nas profil to ili tudi
             if(Objects.equals(getArguments().getString("id_vlasnik"), prefs.getString("uid", null))){
@@ -144,10 +139,47 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 ucitaj_podatke(getArguments().getString("id_vlasnik"));
             }
         }
+        ///
+        if (!isMyServiceRunning(mService.getClass())) {
+            aSwitch.setChecked(false);
+        }else
+        {
+            aSwitch.setChecked(true);
+        }
+        aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                Log.d("ProfileF","On");
+                if (!isMyServiceRunning(mService.getClass())) {
+                    System.out.println("****** [MainActivity] Starting service...");
+                    SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                    //mTimerServiceIntent.putExtra("fid",prefs.getString("uid",null));
+                    getActivity().startService(mTimerServiceIntent);
+                }
+            } else {
+                Log.d("ProfileF","Off");
+                System.out.println("****** [MainActivity] Stopping service...");
+                getActivity().stopService(mTimerServiceIntent);
+                // The toggle is disabled
+            }
+        });
+
 
 
     }
 
+
+
+    // Metoda koja provjerava je li doticni servis aktivan
+    // (pretragom svih aktivnih servisa i usporedjivanjem parametra ClassName):
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
     private void ucitaj_podatke(String id_vlasnik) {
         DatabaseReference  myRef;
         myRef= FirebaseDatabase.getInstance().getReference("Kor");
@@ -221,7 +253,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
 
     private void postavi_vrijednosti(View view){
-        SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         username=prefs.getString("username",null);
         email=prefs.getString("email",null);
         url=prefs.getString("url","");
@@ -276,10 +308,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 .requestEmail()
                 .build();
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(Objects.requireNonNull(getActivity()), gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
 
         //todo dodati toolbar jer ne nestaje ponekad kad treba
-        SharedPreferences prefss = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        SharedPreferences prefss = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         Log.d("Profile:",prefss.getString("uid",""));
 
         viewPager = view.findViewById(R.id.view_pager);
@@ -287,8 +319,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
         favFragment=new FavFragment();
         objaveFragment=new ObjaveFragment();
-        komentariFragment=new KomentariFragment();
-        viewPager.setOffscreenPageLimit(3);
+        viewPager.setOffscreenPageLimit(2);
         tabLayout.setupWithViewPager(viewPager);
 
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getChildFragmentManager(), 0);
@@ -296,14 +327,14 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         viewPagerAdapter.addFragment(objaveFragment, "Objave");
         viewPagerAdapter.addFragment(favFragment, "Pratim");
 
-        viewPagerAdapter.addFragment(komentariFragment, "Komentari");
+
         viewPager.setAdapter(viewPagerAdapter);
     }
     @Override
     public void onClick(View view) {
         if(view.equals(logout)){
             mAuth.signOut();
-            mGoogleSignInClient.signOut().addOnCompleteListener(Objects.requireNonNull(getActivity()),
+            mGoogleSignInClient.signOut().addOnCompleteListener(requireActivity(),
                     task -> {
 
                         FragmentTransaction ft =(getActivity()).getSupportFragmentManager().beginTransaction();
@@ -312,10 +343,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                         ft.commit();
                     });
             LoginManager.getInstance().logOut();
-            SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+            SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.clear();
-            NavigationView navigationView = Objects.requireNonNull(getActivity()).findViewById(R.id.nav_view);
+            NavigationView navigationView = requireActivity().findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
             ime_nav=headerView.findViewById(R.id.ime_navigation);
             email_nav=headerView.findViewById(R.id.email_navigation);
@@ -329,6 +360,8 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             MenuItem item =menu.findItem(R.id.dodaj_objavu);
             item.setVisible(false);
             item =menu.findItem(R.id.ispis_objava);
+            item.setVisible(false);
+            item =menu.findItem(R.id.moj_profil);
             item.setVisible(false);
             //Log.d("dal izbrise","usao sam");
             editor.apply();
@@ -442,7 +475,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                     .setButtonInAlbumActivity(false)
                     .setCamera(true)
                     .setReachLimitAutomaticClose(true)
-                    .setHomeAsUpIndicatorDrawable(ContextCompat.getDrawable(Objects.requireNonNull(getActivity()), R.drawable.ic_custom_back_white))
+                    .setHomeAsUpIndicatorDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_custom_back_white))
                     .setDoneButtonDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_check))
                     .setAllDoneButtonDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ic_check))
                     .setAllViewTitle("All")
@@ -503,7 +536,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         Map<String, Object> postValues2=user_up.toMap();
         myRef.child(uid).updateChildren(postValues2).addOnSuccessListener(aVoid -> {
             Toast.makeText(getActivity(),"Ažuriranje uspjelo",Toast.LENGTH_LONG).show();
-            SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+            SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("email",e.getText().toString());
             editor.putString("username", u.getText().toString());
@@ -518,7 +551,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             if(!TextUtils.isEmpty(user_up.getTel_broj())){
                 tel_sl.setVisibility(View.VISIBLE);
             }
-            NavigationView navigationView = Objects.requireNonNull(getActivity()).findViewById(R.id.nav_view);
+            NavigationView navigationView = requireActivity().findViewById(R.id.nav_view);
             View headerView = navigationView.getHeaderView(0);
             ime_nav=headerView.findViewById(R.id.ime_navigation);
             email_nav=headerView.findViewById(R.id.email_navigation);
@@ -532,7 +565,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     //dohvacamo koja vrsta je slika
     private String getFileExtension(Uri uri) {
-        ContentResolver cR = Objects.requireNonNull(getActivity()).getContentResolver();
+        ContentResolver cR = requireActivity().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
 
@@ -585,10 +618,16 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             FirebaseUser user=mAuth.getCurrentUser();
             if(user == null){
                 //Log.d("onStart::","argument null user isto");
-                FragmentTransaction ft =(Objects.requireNonNull(getActivity())).getSupportFragmentManager().beginTransaction();
+                FragmentTransaction ft =(requireActivity()).getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment, new LoginFragment());
                 //ft.addToBackStack("tag_back1_profile");
                 ft.commit();
+            }
+            if (!isMyServiceRunning(mService.getClass())) {
+                aSwitch.setChecked(false);
+            }else
+            {
+                aSwitch.setChecked(true);
             }
         }
 

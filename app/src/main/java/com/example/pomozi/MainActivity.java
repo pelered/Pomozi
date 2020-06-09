@@ -12,7 +12,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.Tab.ObjaveFragment;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -26,11 +32,13 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     private TextView log;
-
+    private FirebaseAuth mAuth;
+    private GoogleSignInClient mGoogleSignInClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mAuth=FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -48,12 +56,55 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View view=navigationView.getHeaderView(0);
         log=view.findViewById(R.id.log_in);
         log.setOnClickListener(v -> {
+            if(log.getText().equals("Log in")){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new LoginFragment());
             ft.addToBackStack("tag_log");
             ft.commit();
             DrawerLayout drawerr = findViewById(R.id.drawer_layout);
             drawerr.closeDrawer(GravityCompat.START);
+            }else{
+                //potrebno da se moze odlogirat i s google,da mozes kasnije i druge accounte birati
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                        .build();
+                // Build a GoogleSignInClient with the options specified by gso.
+                mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+                mAuth.signOut();
+                mGoogleSignInClient.signOut().addOnCompleteListener(
+                        task -> {
+
+                            FragmentTransaction ft =getSupportFragmentManager().beginTransaction();
+                            ft.replace(R.id.nav_host_fragment, new HomeFragment());
+                            //ft.addToBackStack("tag_back1_profile");
+                            ft.commit();
+                        });
+                LoginManager.getInstance().logOut();
+                SharedPreferences prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                View headerView = navigationView.getHeaderView(0);
+                TextView ime_nav,email_nav;
+                ImageView photo_nav;
+                ime_nav=headerView.findViewById(R.id.ime_navigation);
+                email_nav=headerView.findViewById(R.id.email_navigation);
+                log=headerView.findViewById(R.id.log_in);
+                photo_nav=headerView.findViewById(R.id.imageViewprofile);
+                ime_nav.setText(R.string.nav_header_title);
+                email_nav.setText(R.string.nav_header_subtitle);
+                Glide.with(this).load(R.mipmap.ic_launcher_round).apply(RequestOptions.circleCropTransform()).into(photo_nav);
+                log.setText(R.string.log_in);
+                Menu menu=navigationView.getMenu();
+                MenuItem item =menu.findItem(R.id.dodaj_objavu);
+                item.setVisible(false);
+                item =menu.findItem(R.id.ispis_objava);
+                item.setVisible(false);
+                item =menu.findItem(R.id.moj_profil);
+                item.setVisible(false);
+                //Log.d("dal izbrise","usao sam");
+                editor.apply();
+            }
         });
         SharedPreferences prefs = Objects.requireNonNull(this).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         if(prefs.getString("username",null)!=null){
@@ -75,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             MenuItem item =menu.findItem(R.id.dodaj_objavu);
             item.setVisible(true);
             item =menu.findItem(R.id.ispis_objava);
+            item.setVisible(true);
+            item =menu.findItem(R.id.moj_profil);
             item.setVisible(true);
         }
 
@@ -151,8 +204,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
 
         }
+        else if (id == R.id.moj_profil) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment,new ProfileFragment());
+            ft.addToBackStack("tag_back4");
+            ft.commit();
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
+            drawer.closeDrawer(GravityCompat.START);
+
+        }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

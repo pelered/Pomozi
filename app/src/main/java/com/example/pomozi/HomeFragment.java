@@ -63,7 +63,7 @@ public class HomeFragment extends Fragment {
         recyclerViewHome.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(getContext());
         recyclerViewHome.setLayoutManager(layoutManager);
-        SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         grad=prefs.getString("grad","");
         zup=prefs.getString("zupanija","");
         //spiner
@@ -87,7 +87,7 @@ public class HomeFragment extends Fragment {
             dodaj_obajvu=view.findViewById(R.id.dodaj_objavu);
             dodaj_obajvu.setVisibility(View.VISIBLE);
             dodaj_obajvu.setOnClickListener(v -> {
-                FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+                FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment,new EditZiv());
                 ft.addToBackStack("home_fragment");
                 ft.commit();

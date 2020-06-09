@@ -352,7 +352,7 @@ public class EditZiv extends Fragment {
     //dohvacamo koja vrsta je slika
     private String getFileExtension(Uri uri) {
         Log.d("upload_get",uri.toString());
-        ContentResolver cR = Objects.requireNonNull(getActivity()).getContentResolver();
+        ContentResolver cR = requireActivity().getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
 

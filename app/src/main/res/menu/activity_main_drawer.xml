@@ -10,6 +10,11 @@
             android:title="@string/po_etna" />
         <item
             android:visible="false"
+            android:id="@+id/moj_profil"
+            android:icon="@drawable/ic_profile"
+            android:title="@string/moj_profil" />
+        <item
+            android:visible="false"
             android:id="@+id/dodaj_objavu"
             android:icon="@drawable/ic_baseline_add_24"
             android:title="@string/nova_objava" />

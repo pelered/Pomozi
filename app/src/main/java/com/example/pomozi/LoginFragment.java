@@ -142,7 +142,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null){
             //updateUI(currentUser);
-            FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new ProfileFragment());
             ft.commit();
         }
@@ -176,7 +176,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 String finalUsername = username;
                 String finalUrl = url;
                 mDatabaseRef.addOnSuccessListener(aVoid -> {
-                    SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                    SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("email", email);
                     editor.putString("username", finalUsername);
@@ -198,20 +198,19 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     item.setVisible(true);
                     item =menu.findItem(R.id.ispis_objava);
                     item.setVisible(true);
+                    item =menu.findItem(R.id.moj_profil);
+                    item.setVisible(true);
                     if(finalUrl !=null){
                         Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
                     }
                     ProfileFragment fragment=new ProfileFragment();
-                    //Bundle args = new Bundle();
-                    //args.putString("login", "log");
-                    //fragment.setArguments(args);
-                    FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+
+                    FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.nav_host_fragment, fragment);
-                    //ft.addToBackStack("tag_back2");
                     ft.commit();
                 }).addOnFailureListener(e -> Log.d("Neuspjel ", "upload"));
             } else if (FirebaseDatabase.getInstance().getReference("Kor").child(uid) != null || user_dohvati != null) {
-                SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 String finalUrl = url;
                 String uid_pri = user_dohvati.getUid();
@@ -221,7 +220,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 editor.putBoolean("hasLogin", true);
                 editor.putString("url", user_dohvati.getUrl());
                 editor.apply();
-                SharedPreferences prefss = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                SharedPreferences prefss = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
                 NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
                 View headerView = navigationView.getHeaderView(0);
                 ime_nav = headerView.findViewById(R.id.ime_navigation);
@@ -236,6 +235,8 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 item.setVisible(true);
                 item =menu.findItem(R.id.ispis_objava);
                 item.setVisible(true);
+                item =menu.findItem(R.id.moj_profil);
+                item.setVisible(true);
                 //Log.d("LoginF:",finalUrl);
                 //Log.d("LoginF1:", String.valueOf(profile_photo));
                 if(finalUrl!=null){
@@ -246,12 +247,12 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 //Bundle args = new Bundle();
                 //args.putString("login", "log");
                 //fragment.setArguments(args);
-                FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+                FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.nav_host_fragment, fragment);
                 ft.commit();
             }
         }else{
-            FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new LoginFragment());
             ft.commit();
         }
