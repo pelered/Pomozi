@@ -101,7 +101,7 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:gravity="end"
-                  android:text="Stanje: "
+                  android:text="Stanje:  "
                   android:textAllCaps="false"
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
@@ -127,7 +127,7 @@
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
-                  android:text="Status: "
+                  android:text="Status:  "
                   android:gravity="end"
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
@@ -153,7 +153,7 @@
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
-                  android:text="Vrsta:"
+                  android:text="Vrsta:  "
                   android:gravity="end"
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
@@ -179,7 +179,7 @@
                   android:layout_width="0dp"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
-                  android:text="Stvoreno: "
+                  android:text="Stvoreno:  "
                   android:gravity="end"
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
@@ -207,7 +207,7 @@
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
-                  android:text="Ažurirano:"
+                  android:text="Ažurirano:  "
                   android:gravity="end"
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
@@ -232,7 +232,7 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:gravity="end"
-                  android:text="Adresa: "
+                  android:text="Adresa:  "
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
 
@@ -259,7 +259,7 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:gravity="end"
-                  android:text="Grad: "
+                  android:text="Grad:  "
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
 
@@ -284,7 +284,7 @@
                   android:layout_height="wrap_content"
                   android:layout_weight="1"
                   android:gravity="end"
-                  android:text="Županija: "
+                  android:text="Županija:  "
                   android:textColor="@color/colorPrimary"
                   android:textStyle="bold" />
 

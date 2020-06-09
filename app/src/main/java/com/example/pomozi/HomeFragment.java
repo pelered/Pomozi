@@ -67,10 +67,14 @@ public class HomeFragment extends Fragment {
         recyclerViewHome.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(getContext());
         layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
+        layoutManager.scrollToPosition(0);
         recyclerViewHome.setLayoutManager(layoutManager);
+        recyclerViewHome.scrollToPosition(0);
         SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         grad=prefs.getString("grad","");
         zup=prefs.getString("zupanija","");
+        //Log.d("HomeF",grad+zup);
         //spiner
         String[] data = {"Najnovije", "Grad", "Županija"};
 
@@ -81,8 +85,6 @@ public class HomeFragment extends Fragment {
         spinner = (CustomSpinner) view.findViewById(R.id.spinner);
         spinner.setAdapter(adapter);
         if(!sort.equals("")){
-            //Log.d("HomeFsort",sort);
-            //Log.d("HomeFsort", String.valueOf(Arrays.asList(data).indexOf(sort)));
             spinner.setSelection(Arrays.asList(data).indexOf(sort));
         }
         spinner.setSpinnerEventsListener(new CustomSpinner.OnSpinnerEventsListener() {
@@ -165,6 +167,10 @@ public class HomeFragment extends Fragment {
                     }
 
                 }
+                layoutManager.setReverseLayout(true);
+                layoutManager.scrollToPosition(0);
+                layoutManager.setStackFromEnd(true);
+                recyclerViewHome.scrollToPosition(0);
                 myAdapter = new IspisAdapterZiv(getContext(), itemList);
                 recyclerViewHome.setAdapter(myAdapter);
             }

@@ -54,6 +54,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.EventListener;
 import java.util.Map;
 import java.util.Objects;
 
@@ -100,7 +101,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(Objects.requireNonNull(getActivity()), gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
 
 
         reg=view.findViewById(R.id.reg);
@@ -172,6 +173,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
             Task<Void> mDatabaseRef;
             Map<String, Object> postValues2 = user1.toMap();
             if (FirebaseDatabase.getInstance().getReference("Kor").child(uid) == null) {
+                //Log.d("LoginF:", String.valueOf(FirebaseDatabase.getInstance().getReference("Kor").child(uid)));
                 mDatabaseRef = FirebaseDatabase.getInstance().getReference("Kor").child(uid).updateChildren(postValues2);
                 String finalUsername = username;
                 String finalUrl = url;
@@ -210,46 +212,65 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                     ft.commit();
                 }).addOnFailureListener(e -> Log.d("Neuspjel ", "upload"));
             } else if (FirebaseDatabase.getInstance().getReference("Kor").child(uid) != null || user_dohvati != null) {
-                SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                String finalUrl = url;
-                String uid_pri = user_dohvati.getUid();
-                editor.putString("email", user_dohvati.getEmail());
-                editor.putString("username", user_dohvati.getIme());
-                editor.putString("uid", uid_pri);
-                editor.putBoolean("hasLogin", true);
-                editor.putString("url", user_dohvati.getUrl());
-                editor.apply();
-                SharedPreferences prefss = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-                NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
-                View headerView = navigationView.getHeaderView(0);
-                ime_nav = headerView.findViewById(R.id.ime_navigation);
-                email_nav = headerView.findViewById(R.id.email_navigation);
-                ime_nav.setText(user_dohvati.getIme());
-                email_nav.setText(user_dohvati.getEmail());
-                profile_photo=headerView.findViewById(R.id.imageViewprofile);
-                log=headerView.findViewById(R.id.log_in);
-                log.setText(R.string.log_out);
-                Menu menu=navigationView.getMenu();
-                MenuItem item =menu.findItem(R.id.dodaj_objavu);
-                item.setVisible(true);
-                item =menu.findItem(R.id.ispis_objava);
-                item.setVisible(true);
-                item =menu.findItem(R.id.moj_profil);
-                item.setVisible(true);
-                //Log.d("LoginF:",finalUrl);
-                //Log.d("LoginF1:", String.valueOf(profile_photo));
-                if(finalUrl!=null){
-                    Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
-                }
+                String finalUrl1 = url;
+                FirebaseDatabase.getInstance().getReference("Kor").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User privremeni_user;
+                        privremeni_user=dataSnapshot.getValue(User.class);
+                        SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        String finalUrl = finalUrl1;
+                        String uid_pri = user_dohvati.getUid();
+                        editor.putString("email", user_dohvati.getEmail());
+                        editor.putString("username", user_dohvati.getIme());
+                        editor.putString("uid", uid_pri);
+                        editor.putBoolean("hasLogin", true);
+                        editor.putString("url", user_dohvati.getUrl());
+                        editor.putString("grad",privremeni_user.getGrad());
+                        editor.putString("zupanija",privremeni_user.getZupanija());
+                        editor.putString("tel_broj",privremeni_user.getTel_broj());
+                        editor.putString("add",privremeni_user.getAdd());
+                        editor.apply();
+                        SharedPreferences prefss = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+                        View headerView = navigationView.getHeaderView(0);
+                        ime_nav = headerView.findViewById(R.id.ime_navigation);
+                        email_nav = headerView.findViewById(R.id.email_navigation);
+                        ime_nav.setText(user_dohvati.getIme());
+                        email_nav.setText(user_dohvati.getEmail());
+                        profile_photo=headerView.findViewById(R.id.imageViewprofile);
+                        log=headerView.findViewById(R.id.log_in);
+                        log.setText(R.string.log_out);
+                        Menu menu=navigationView.getMenu();
+                        MenuItem item =menu.findItem(R.id.dodaj_objavu);
+                        item.setVisible(true);
+                        item =menu.findItem(R.id.ispis_objava);
+                        item.setVisible(true);
+                        item =menu.findItem(R.id.moj_profil);
+                        item.setVisible(true);
+                        //Log.d("LoginF:",finalUrl);
+                        //Log.d("LoginF1:", String.valueOf(profile_photo));
+                        if(finalUrl!=null){
+                            Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
+                        }
 
-                ProfileFragment fragment=new ProfileFragment();
-                //Bundle args = new Bundle();
-                //args.putString("login", "log");
-                //fragment.setArguments(args);
-                FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.nav_host_fragment, fragment);
-                ft.commit();
+                        ProfileFragment fragment=new ProfileFragment();
+                        //Bundle args = new Bundle();
+                        //args.putString("login", "log");
+                        //fragment.setArguments(args);
+                        FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, fragment);
+                        ft.commit();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
         }else{
             FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
@@ -262,7 +283,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         if(v.equals(googleSignInButton)){
             signIn();
         }else if(v.equals(reg)){
-            FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new RegisterFragment());
             ft.addToBackStack("log_frag");
             ft.commit();
@@ -282,7 +303,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         Log.d("TAG", "handleFacebookAccessToken:" + token);
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("Tag", "signInWithCredential:success");
@@ -319,7 +340,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         Log.d("Tag", "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("Tag", "signInWithCredential:success");
@@ -342,7 +363,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     public void log() {
 
         mAuth.signInWithEmailAndPassword(email.getText().toString(), lozinka.getText().toString())
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("log s emailom i pass", "signInWithEmail:success");

@@ -58,6 +58,8 @@
     <string name="nova_objava">Nova objava</string>
     <string name="moje_objave">Moje objave</string>
     <string name="moj_profil">Moj profil</string>
+    <string name="upanija_z">Županija:</string>
+    <string name="a_urirano_z">Ažurirano:</string>
 
 
 </resources>

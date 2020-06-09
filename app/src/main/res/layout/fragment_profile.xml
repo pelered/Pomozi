@@ -65,7 +65,7 @@
 
                     <ImageView
                         android:id="@+id/send_email"
-                        android:layout_width="wrap_content"
+                        android:layout_width="24dp"
                         android:layout_height="match_parent"
                         app:srcCompat="@drawable/ic_email_"
                         tools:ignore="VectorDrawableCompat" />
@@ -88,7 +88,7 @@
 
                     <ImageView
                         android:id="@+id/tel_zovi"
-                        android:layout_width="wrap_content"
+                        android:layout_width="22dp"
                         android:layout_height="match_parent"
                         app:srcCompat="@drawable/ic_phone_forwarded"
                         tools:ignore="VectorDrawableCompat" />
@@ -159,20 +159,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="bottom|end"
-                    android:orientation="vertical">
-
-                    <ImageButton
-
-                        android:id="@+id/logout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:layout_marginBottom="5dp"
-                        android:background="@drawable/buttona"
-                        android:src="@drawable/ic_log_out"
-
-                        android:textStyle="normal" />
-                </LinearLayout>
+                    android:orientation="vertical"/>
 
             </LinearLayout>
 

@@ -1,7 +1,9 @@
 package com.example.pomozi;
 
+import android.app.ActivityManager;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.example.pomozi.Service.MyService;
 import com.example.pomozi.Tab.ObjaveFragment;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -97,6 +100,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             DrawerLayout drawerr = findViewById(R.id.drawer_layout);
             drawerr.closeDrawer(GravityCompat.START);
             }else{
+                Intent mTimerServiceIntent;
+                MyService mService;
+                mService = new MyService();
+                mTimerServiceIntent = new Intent(this, mService.getClass());
+                if (isMyServiceRunning(mService.getClass())) {
+                    System.out.println("****** [MainActivity] Stopping service...");
+                    stopService(mTimerServiceIntent);
+                }
                 //potrebno da se moze odlogirat i s google,da mozes kasnije i druge accounte birati
                 GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(getString(R.string.default_web_client_id))
@@ -251,4 +262,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    // Metoda koja provjerava je li doticni servis aktivan
+    // (pretragom svih aktivnih servisa i usporedjivanjem parametra ClassName):
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

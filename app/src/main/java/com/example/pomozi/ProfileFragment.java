@@ -78,7 +78,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private EditText u,e,broj;
     private AutoCompleteTextView add,grad,zup;
     private Button upload;
-    private ImageButton logout, edit_profile;
+    private ImageButton  edit_profile;
     private ImageView profile_photo,photo_nav,tel_sl,email_sl;
     private FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
@@ -113,7 +113,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         profile_photo=view.findViewById(R.id.photo);
         tel_sl=view.findViewById(R.id.tel_zovi);
         email_sl=view.findViewById(R.id.send_email);
-        logout=view.findViewById(R.id.logout);
         edit_profile=view.findViewById(R.id.edit_profile);
         upload=view.findViewById(R.id.uplodaj_profil);
         aSwitch=view.findViewById(R.id.prati_not);
@@ -151,8 +150,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 Log.d("ProfileF","On");
                 if (!isMyServiceRunning(mService.getClass())) {
                     System.out.println("****** [MainActivity] Starting service...");
-                    SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-                    //mTimerServiceIntent.putExtra("fid",prefs.getString("uid",null));
                     getActivity().startService(mTimerServiceIntent);
                 }
             } else {
@@ -181,6 +178,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         return false;
     }
     private void ucitaj_podatke(String id_vlasnik) {
+        aSwitch.setVisibility(View.GONE);
         DatabaseReference  myRef;
         myRef= FirebaseDatabase.getInstance().getReference("Kor");
         myRef.child(id_vlasnik).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -200,7 +198,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         TabLayout tab=getView().findViewById(R.id.tab_layout);
         tab.setVisibility(View.GONE);
         edit_profile.setVisibility(View.GONE);
-        logout.setVisibility(View.GONE);
         upload.setVisibility(View.GONE);
         u.setText(user_dohvaceno.getIme());
         e.setText(user_dohvaceno.getEmail());
@@ -288,7 +285,6 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             add.setText(prefs.getString("add",""));
         }
         mAuth=FirebaseAuth.getInstance();
-        logout.setOnClickListener(this);
         if(uid!=null){
             edit_profile.setVisibility(View.VISIBLE);
             edit_profile.setOnClickListener(this);
@@ -332,40 +328,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     }
     @Override
     public void onClick(View view) {
-        if(view.equals(logout)){
-            mAuth.signOut();
-            mGoogleSignInClient.signOut().addOnCompleteListener(requireActivity(),
-                    task -> {
-
-                        FragmentTransaction ft =(getActivity()).getSupportFragmentManager().beginTransaction();
-                        ft.replace(R.id.nav_host_fragment, new HomeFragment());
-                        //ft.addToBackStack("tag_back1_profile");
-                        ft.commit();
-                    });
-            LoginManager.getInstance().logOut();
-            SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.clear();
-            NavigationView navigationView = requireActivity().findViewById(R.id.nav_view);
-            View headerView = navigationView.getHeaderView(0);
-            ime_nav=headerView.findViewById(R.id.ime_navigation);
-            email_nav=headerView.findViewById(R.id.email_navigation);
-            log=headerView.findViewById(R.id.log_in);
-            photo_nav=headerView.findViewById(R.id.imageViewprofile);
-            ime_nav.setText(R.string.nav_header_title);
-            email_nav.setText(R.string.nav_header_subtitle);
-            Glide.with(getActivity()).load(R.mipmap.ic_launcher_round).apply(RequestOptions.circleCropTransform()).into(photo_nav);
-            log.setText(R.string.log_in);
-            Menu menu=navigationView.getMenu();
-            MenuItem item =menu.findItem(R.id.dodaj_objavu);
-            item.setVisible(false);
-            item =menu.findItem(R.id.ispis_objava);
-            item.setVisible(false);
-            item =menu.findItem(R.id.moj_profil);
-            item.setVisible(false);
-            //Log.d("dal izbrise","usao sam");
-            editor.apply();
-        }else if(view.equals(edit_profile)){
+        if(view.equals(edit_profile)){
             if(edit_mode){
                 upload.setVisibility(View.INVISIBLE);
                 upload.setClickable(false);
