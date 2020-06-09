@@ -63,8 +63,8 @@ public class IspisAdapterZiv extends RecyclerView.Adapter<IspisAdapterZiv.ImageV
             ft.commit();
         });
 
-        if(uploadCurrent.getUrl()!=null){
-            //Log.d("IspisA:",uploadCurrent.toString());
+        if(uploadCurrent.getUrl()!=null && uploadCurrent.getUrl().size()!=0 ){
+            Log.d("IspisA:",uploadCurrent.toString());
             if(uploadCurrent.getUrl().get("0_key").contains("mp4")){
                 RequestOptions requestOptions = new RequestOptions();
                 Glide.with(mContext)

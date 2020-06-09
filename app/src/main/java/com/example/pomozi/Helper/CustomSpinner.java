@@ -28,6 +28,8 @@ public class CustomSpinner extends androidx.appcompat.widget.AppCompatSpinner {
         super(context);
     }
 
+
+
     public interface OnSpinnerEventsListener {
 
         void onSpinnerOpened();

@@ -1,8 +1,10 @@
 package com.example.pomozi;
 
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mAuth=FirebaseAuth.getInstance();
+
+
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -50,9 +55,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
-        FragmentTransaction ftt = getSupportFragmentManager().beginTransaction();
+
+        String menuFragment = getIntent().getStringExtra("notifikacija");
+        String oznaka=getIntent().getStringExtra("oznakan");
+
+        FragmentTransaction fttt = getSupportFragmentManager().beginTransaction();
+        // If menuFragment is defined, then this activity was launched with a fragment selection
+        if (menuFragment!=null) {
+            // Log.d("Main:",menuFragment);
+            //Log.d("Main2",oznaka);
+            // Here we can decide what do to -- perhaps load other parameters from the intent extras such as IDs, etc
+            if (menuFragment.equals("not")) {
+                Log.d("Main3", String.valueOf(menuFragment.equals("not")));
+                PrikazZivFragment prikazZivFragment = new PrikazZivFragment();
+                Bundle args = new Bundle();
+                //Log.d("PrikazZivvlas:",vlasnik.getText().toString());
+                args.putString("oznaka", oznaka);
+                prikazZivFragment.setArguments(args);
+                fttt.replace(R.id.nav_host_fragment, prikazZivFragment);
+                fttt.addToBackStack("tag_back_prikazZiv");
+                fttt.commit();
+            }
+        } else {
+            // Activity was not launched with a menuFragment selected -- continue as if this activity was opened from a launcher (for example)
+            HomeFragment standardFragment = new HomeFragment();
+            fttt.replace(R.id.nav_host_fragment, standardFragment);
+            fttt.commit();
+        }
+
+        /*FragmentTransaction ftt = getSupportFragmentManager().beginTransaction();
         ftt.replace(R.id.nav_host_fragment, new HomeFragment());
-        ftt.commit();
+        ftt.commit();*/
         View view=navigationView.getHeaderView(0);
         log=view.findViewById(R.id.log_in);
         log.setOnClickListener(v -> {

@@ -26,6 +26,8 @@ import com.example.pomozi.Adapter.ProfileMyAdapter;
 import com.example.pomozi.Helper.CustomSpinner;
 import com.example.pomozi.Model.ZivUpload;
 import com.example.pomozi.R;
+import com.facebook.login.LoginFragment;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +37,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -46,10 +49,11 @@ public class HomeFragment extends Fragment {
     private IspisAdapterZiv myAdapter;
     private LinearLayoutManager layoutManager;
     private Button dodaj_obajvu;
-
+    private CustomSpinner spinner;
     private String grad,zup;
     private ZivUpload ziv= new ZivUpload();
     private List<ZivUpload> itemList =new ArrayList<>();
+    private String sort;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         if (container != null) {
@@ -62,6 +66,7 @@ public class HomeFragment extends Fragment {
         recyclerViewHome =view.findViewById(R.id.recycler_home);
         recyclerViewHome.setHasFixedSize(true);
         layoutManager=new LinearLayoutManager(getContext());
+        layoutManager.setReverseLayout(true);
         recyclerViewHome.setLayoutManager(layoutManager);
         SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         grad=prefs.getString("grad","");
@@ -71,15 +76,28 @@ public class HomeFragment extends Fragment {
 
         ArrayAdapter adapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_selected, data);
         adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        sort=prefs.getString("sort","");
 
-        final CustomSpinner spinner = (CustomSpinner) view.findViewById(R.id.spinner);
+        spinner = (CustomSpinner) view.findViewById(R.id.spinner);
         spinner.setAdapter(adapter);
+        if(!sort.equals("")){
+            //Log.d("HomeFsort",sort);
+            //Log.d("HomeFsort", String.valueOf(Arrays.asList(data).indexOf(sort)));
+            spinner.setSelection(Arrays.asList(data).indexOf(sort));
+        }
         spinner.setSpinnerEventsListener(new CustomSpinner.OnSpinnerEventsListener() {
             public void onSpinnerOpened() {
                 spinner.setSelected(true);
+
             }
             public void onSpinnerClosed() {
                 spinner.setSelected(false);
+                SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("sort",spinner.getSelectedItem().toString());
+                editor.apply();
+                generateItem();
+
             }
         });
 
@@ -95,6 +113,7 @@ public class HomeFragment extends Fragment {
         }else{
             dodaj_obajvu=view.findViewById(R.id.dodaj_objavu);
             dodaj_obajvu.setVisibility(View.GONE);
+            spinner.setVisibility(View.GONE);
         }
 
         //Log.d("Home",grad);
@@ -103,32 +122,46 @@ public class HomeFragment extends Fragment {
 
     private void generateItem() {
         DatabaseReference ref= FirebaseDatabase.getInstance().getReference("Ziv");
-        Query query = ref.orderByChild("last_date").startAt(new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(new Date())).limitToFirst(30);
-        //Log.d("Ispisujem0:",query.toString());
+        Query query = ref.orderByChild("last_date").limitToFirst(100);
+
+        //Query query = ref.orderByChild("last_date").limitToFirst(10);
+        //
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 itemList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    if (!grad.equals("")){
-                        //Log.d("Ispisujem",postSnapshot.child("grad").getValue().toString());
-                       if(postSnapshot.child("grad").getValue().toString().contains(grad) || grad.contains(postSnapshot.child("grad").getValue().toString())){
-                          // Log.d("Ispisujem",postSnapshot.getValue().toString());
-                           ziv = postSnapshot.getValue(ZivUpload.class);
-                           if (ziv != null) {
-                               ziv.setKey(postSnapshot.getKey());
-                               //Log.d("generateItem", ziv.toString());
-                               itemList.add(ziv);
-                           }
-                       }
+                    //Log.d("Ispisujem",postSnapshot.child("grad").getValue().toString());
+                    if(spinner.getSelectedItem().toString().equals("Grad") && !grad.equals("")){
+                        if(postSnapshot.child("grad").getValue().toString().contains(grad) || grad.contains(postSnapshot.child("grad").getValue().toString())){
+                            Log.d("Ispisujem",postSnapshot.getValue().toString());
+                            ziv = postSnapshot.getValue(ZivUpload.class);
+                            if (ziv != null) {
+                                ziv.setKey(postSnapshot.getKey());
+                                //Log.d("generateItem", ziv.toString());
+                                itemList.add(ziv);
+                            }
+                        }
+                    }else if(spinner.getSelectedItem().toString().equals("Županija") && !zup.equals("")){
+                        if(postSnapshot.child("zupanija").getValue().toString().contains(zup) || zup.contains(postSnapshot.child("zupanija").getValue().toString())){
+                            Log.d("Ispisujem",postSnapshot.getValue().toString());
+                            ziv = postSnapshot.getValue(ZivUpload.class);
+                            if (ziv != null) {
+                                ziv.setKey(postSnapshot.getKey());
+                                //Log.d("generateItem", ziv.toString());
+                                itemList.add(ziv);
+                            }
+                        }
                     }else{
-                        //Log.d("Ispisujem",postSnapshot.getValue().toString());
+                        Log.d("Ispisujem",postSnapshot.getValue().toString());
                         ziv = postSnapshot.getValue(ZivUpload.class);
                         if (ziv != null) {
                             ziv.setKey(postSnapshot.getKey());
                             //Log.d("generateItem", ziv.toString());
                             itemList.add(ziv);
                         }
+
+
                     }
 
                 }
@@ -140,6 +173,12 @@ public class HomeFragment extends Fragment {
                 Log.d("onCancelled:fav: ",databaseError.getMessage());
             }
         });
+
+    }
+    public void onStart() {
+        super.onStart();
+
+
 
     }
 }

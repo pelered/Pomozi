@@ -25,19 +25,31 @@
             android:textColor="#ffffff"
             android:textSize="15sp"
             app:iconGravity="textStart" />
-        <com.example.pomozi.Helper.CustomSpinner
-            android:id="@+id/spinner"
-            style="@style/Widget.AppCompat.Spinner"
-            android:layout_margin="10dp"
-            android:layout_width="150dp"
-            android:dropDownWidth="200dp"
-            android:layout_height="?attr/dropdownListPreferredItemHeight"
-            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
-            android:background="@drawable/spinner_bg"
-            android:popupBackground="@android:color/white"
-            android:paddingRight="14dp"
-            android:stateListAnimator="@drawable/spinner_sla"
-            android:popupElevation="3dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="top"
+            android:gravity="top">
+
+            <com.example.pomozi.Helper.CustomSpinner
+                android:id="@+id/spinner"
+                style="@style/Widget.AppCompat.Spinner"
+                android:layout_width="150dp"
+                android:layout_height="?attr/dropdownListPreferredItemHeight"
+                android:layout_gravity="top|end"
+
+                android:layout_margin="10dp"
+                android:background="@drawable/spinner_bg"
+                android:dropDownWidth="200dp"
+                android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+                android:paddingRight="14dp"
+                android:popupBackground="@android:color/white"
+                android:popupElevation="3dp"
+                android:stateListAnimator="@drawable/spinner_sla" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

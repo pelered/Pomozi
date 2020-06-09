@@ -48,7 +48,7 @@ public class PrikazZivFragment extends Fragment {
     private DatabaseReference mDatabaseRef;
     private SliderView sliderView1;
     private ZivUpload odabrana_ziv;
-    private TextView stanje,opis,vlasnik, datumi, adresa,status,vrsta, grad, zupanija;
+    private TextView stanje,opis,vlasnik, datumi,datumaz, adresa,status,vrsta, grad, zupanija,adresatext;
     private ArrayList<String> slike= new ArrayList<>();
     private ImageView favorite,profil;
     private boolean oznacen_fav=false;
@@ -78,6 +78,7 @@ public class PrikazZivFragment extends Fragment {
         opis=view.findViewById(R.id.opis);
         vlasnik=view.findViewById(R.id.korisnik);
         datumi =view.findViewById(R.id.datum);
+        datumaz=view.findViewById(R.id.datum_azur);
         adresa =view.findViewById(R.id.address);
         status=view.findViewById(R.id.status);
         vrsta=view.findViewById(R.id.vrsta);
@@ -87,6 +88,7 @@ public class PrikazZivFragment extends Fragment {
         favorite=view.findViewById(R.id.favorite);
         favorite.setVisibility(View.INVISIBLE);
         profil=view.findViewById(R.id.profile_prikaz);
+        adresatext=view.findViewById(R.id.textViewadresa);
         vlasnik.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,9 +179,18 @@ public class PrikazZivFragment extends Fragment {
         mDatabaseRef.child(oznaka_ziv).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 slike.clear();
                 odabrana_ziv = dataSnapshot.getValue(ZivUpload.class);
-                //Log.d("dadaj:0", dataSnapshot.getValue().toString());
+                //Log.d("PrikazZiv", dataSnapshot.getValue().toString());
+                if(odabrana_ziv==null){
+                    Toast.makeText(getActivity(),"Životinja ne postoji",Toast.LENGTH_SHORT).show();
+                    HomeFragment fragment=new HomeFragment();
+                    FragmentTransaction ft =getActivity().getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, fragment);
+                    ft.commit();
+
+                }
                 if (dataSnapshot.hasChild("url")) {
                     for (Map.Entry<String, String> entry : odabrana_ziv.getUrl().entrySet()) {
                         slike.add(entry.getValue());
@@ -242,18 +253,27 @@ public class PrikazZivFragment extends Fragment {
     @SuppressLint("SetTextI18n")
     private void postavi_podatke() {
 
-        stanje.setText("Stanje: "+odabrana_ziv.getStanje());
+        stanje.setText(odabrana_ziv.getStanje());
         vlasnik.setText(user.getIme());
-        if(!user.getUrl().equals("")){
-            Glide.with(this).load(user.getUrl()).apply(RequestOptions.circleCropTransform()).into(profil);
+        if(isAdded()) {
+            if (!user.getUrl().equals("")) {
+                Glide.with(getActivity()).load(user.getUrl()).apply(RequestOptions.circleCropTransform()).into(profil);
+            }
         }
-        grad.setText("Grad: "+odabrana_ziv.getGrad());
-        datumi.setText("Stvoren: "+odabrana_ziv.getDate()+" Ažurirano: "+odabrana_ziv.getLast_date());
-        status.setText("Status: "+odabrana_ziv.getStatus());
-        zupanija.setText("Županija: "+ odabrana_ziv.getZupanija());
-        vrsta.setText("Vrsta: "+odabrana_ziv.getVrsta());
+        grad.setText(odabrana_ziv.getGrad());
+        datumi.setText(odabrana_ziv.getDate());
+        datumaz.setText(odabrana_ziv.getLast_date());
+        status.setText(odabrana_ziv.getStatus());
+        zupanija.setText( odabrana_ziv.getZupanija());
+        vrsta.setText(odabrana_ziv.getVrsta());
         opis.setText(odabrana_ziv.getOpis());
-        adresa.setText("Adresa: "+ odabrana_ziv.getAdresa());
+        if (odabrana_ziv.getAdresa().equals("")){
+            adresa.setVisibility(View.GONE);
+            adresatext.setVisibility(View.GONE);
+        }else{
+            adresa.setText(odabrana_ziv.getAdresa());
+        }
+
         inicijalizirajSlider();
 
     }

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,8 +38,10 @@ import android.widget.Toast;
 import com.esafirm.imagepicker.features.ImagePicker;
 import com.esafirm.imagepicker.features.ReturnMode;
 import com.esafirm.imagepicker.model.Image;
+import com.example.pomozi.Adapter.PlaceAutoSuggestAdapter;
 import com.example.pomozi.Adapter.SliderAdapterExample;
 import com.example.pomozi.Model.ZivUpload;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -105,7 +109,7 @@ public class EditZiv extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         //iz SharedPref se uzima id jer jedino korisnik logirano može imat ovdje pristup
-        prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         id_korisnika = prefs.getString("uid",null);
         //Log.d("onViewCreated",id_korisnika);
         if (id_korisnika==null){
@@ -139,7 +143,67 @@ public class EditZiv extends Fragment {
         vrsta=view.findViewById(R.id.vrsta);
         stanje=view.findViewById(R.id.stanje);
         status=view.findViewById(R.id.status);
+        if(!oznaka_ziv.equals("")){
+            upload.setText("Ažuriraj");
+        }
         brisi_slike=new ArrayList<>();
+        adres.setAdapter(new PlaceAutoSuggestAdapter(getActivity(),android.R.layout.simple_list_item_1));
+        adres.setOnItemClickListener((parent, vieww, position, id) -> {
+            if(adres!=null) {
+                LatLng latLng = getLatLngFromAddress(adres.getText().toString());
+                if (latLng != null) {
+                    Log.d("Lat Lng : ", " " + latLng.latitude + " " + latLng.longitude);
+                    Address address = getAddressFromLatLng(latLng);
+                    if (address != null) {
+                        zupanija.setText(address.getAdminArea());
+                        grad.setText(address.getLocality());
+                    } else {
+                        Log.d("Adddress", "Address Not Found");
+                    }
+                } else {
+                    Log.d("Lat Lng", "Lat Lng Not Found");
+                }
+            }
+        });
+        grad.setAdapter(new PlaceAutoSuggestAdapter(getActivity(),android.R.layout.simple_list_item_1));
+        grad.setOnItemClickListener((parent, vieww, position, id) -> {
+            if(grad!=null) {
+                Log.d("Address : ", grad.getText().toString());
+                LatLng latLng = getLatLngFromAddress(grad.getText().toString());
+                if (latLng != null) {
+                    //Log.d("Lat Lng : ", " " + latLng.latitude + " " + latLng.longitude);
+                    Address address = getAddressFromLatLng(latLng);
+                    if (address != null) {
+                        zupanija.setText(address.getAdminArea());
+                    } else {
+                        Log.d("Adddress", "Address Not Found");
+                    }
+                } else {
+                    Log.d("Lat Lng", "Lat Lng Not Found");
+                }
+            }
+
+        });
+        zupanija.setAdapter(new PlaceAutoSuggestAdapter(getActivity(),android.R.layout.simple_list_item_1));
+        zupanija.setOnItemClickListener((parent, vieww, position, id) -> {
+            if(zupanija!=null) {
+                Log.d("Address : ", zupanija.getText().toString());
+
+                LatLng latLng = getLatLngFromAddress(zupanija.getText().toString());
+                if (latLng != null) {
+                    //Log.d("Lat Lng : ", " " + latLng.latitude + " " + latLng.longitude);
+                    Address address = getAddressFromLatLng(latLng);
+                    if (address != null) {
+
+                    } else {
+                        Log.d("Adddress", "Address Not Found");
+                    }
+                } else {
+                    Log.d("Lat Lng", "Lat Lng Not Found");
+                }
+            }
+
+        });
         odaberi_sliku.setOnClickListener(v -> openFileChooser());
         izbrisi_sliku.setOnClickListener(v -> {
             if (mUploadTask != null && mUploadTask.isInProgress()) {
@@ -293,8 +357,8 @@ public class EditZiv extends Fragment {
                 }else{
                     mUploadTask = fileReference.putFile(Image);
                 }
-
-                //Log.d("upload_slika3",mUploadTask.toString());
+                Log.d("EditZiv2",fileReference.toString());
+                Log.d("EditZiv3",mUploadTask.toString());
                 // Register observers to listen for when the download is done or if it fails
                 mUploadTask.addOnFailureListener(exception -> Toast.makeText(getActivity(), "Upload nije uspio " + exception.toString(), Toast.LENGTH_LONG).show())
                         .addOnSuccessListener(taskSnapshot -> {
@@ -314,7 +378,7 @@ public class EditZiv extends Fragment {
                             //sprema se link novo spremljenih slika u bazi
                             slike_iz_baze.put(ImageList_key.get(count).toString(),downloadUri.toString());
                             count++;
-                            //Toast.makeText(getActivity(), "Upload.Dohvacen url: "+count, Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Upload.Dohvacen url: "+count, Toast.LENGTH_LONG).show();
 
                         } else {
                             Toast.makeText(getActivity(), "Upload nije uspio", Toast.LENGTH_LONG).show();
@@ -377,11 +441,11 @@ public class EditZiv extends Fragment {
         String last_updated;
         //datum stvaranja, i zadnji update datum
         if(dohvaceno==null){
-            created_at = new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(new Date());
+            created_at = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
         }else{
             created_at=dohvaceno.getDate();
         }
-        last_updated=new SimpleDateFormat("MM-dd-yyyy", Locale.getDefault()).format(new Date());
+        last_updated=new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 //String vrsta, String stanje, String status, String adresa, String grad, String zupanija, String opis, String id_vlasnika, String date, String last_date, Map<String, String> url
         //pripremamo za upload
         ZivUpload upload2 = new ZivUpload(id_vrsta.getText().toString(),id_stanje.getText().toString(),
@@ -589,6 +653,46 @@ public class EditZiv extends Fragment {
                 break;
         }
 
+
+    }
+    private LatLng getLatLngFromAddress(String address){
+
+        Geocoder geocoder=new Geocoder(getActivity());
+        List<Address> addressList;
+
+        try {
+            addressList = geocoder.getFromLocationName(address, 1);
+            if(addressList!=null){
+                Address singleaddress=addressList.get(0);
+                return new LatLng(singleaddress.getLatitude(),singleaddress.getLongitude());
+            }
+            else{
+                return null;
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    private Address getAddressFromLatLng(LatLng latLng){
+        Geocoder geocoder=new Geocoder(getActivity());
+        List<Address> addresses;
+        try {
+            addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 5);
+            if(addresses!=null){
+                return addresses.get(0);
+            }
+            else{
+                return null;
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
 
     }
 }
