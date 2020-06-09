@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pomozi.Adapter.IspisAdapterZiv;
 import com.example.pomozi.Adapter.ProfileMyAdapter;
+import com.example.pomozi.Helper.CustomSpinner;
 import com.example.pomozi.Model.ZivUpload;
 import com.example.pomozi.R;
 import com.google.firebase.database.DataSnapshot;
@@ -64,6 +66,23 @@ public class HomeFragment extends Fragment {
         SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         grad=prefs.getString("grad","");
         zup=prefs.getString("zupanija","");
+        //spiner
+        String[] data = {"Najnovije", "Grad", "Županija"};
+
+        ArrayAdapter adapter = new ArrayAdapter<>(getContext(), R.layout.spinner_item_selected, data);
+        adapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+
+        final CustomSpinner spinner = (CustomSpinner) view.findViewById(R.id.spinner);
+        spinner.setAdapter(adapter);
+        spinner.setSpinnerEventsListener(new CustomSpinner.OnSpinnerEventsListener() {
+            public void onSpinnerOpened() {
+                spinner.setSelected(true);
+            }
+            public void onSpinnerClosed() {
+                spinner.setSelected(false);
+            }
+        });
+
         if(!prefs.getString("uid","").equals("")){
             dodaj_obajvu=view.findViewById(R.id.dodaj_objavu);
             dodaj_obajvu.setVisibility(View.VISIBLE);

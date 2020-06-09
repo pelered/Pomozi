@@ -25,22 +25,19 @@
             android:textColor="#ffffff"
             android:textSize="15sp"
             app:iconGravity="textStart" />
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-
-            android:focusable="false"
-            >
-
-            <AutoCompleteTextView
-                android:text="Grad"
-                android:id="@+id/filled_exposed_dropdown"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+        <com.example.pomozi.Helper.CustomSpinner
+            android:id="@+id/spinner"
+            style="@style/Widget.AppCompat.Spinner"
+            android:layout_margin="10dp"
+            android:layout_width="150dp"
+            android:dropDownWidth="200dp"
+            android:layout_height="?attr/dropdownListPreferredItemHeight"
+            android:dropDownVerticalOffset="?attr/dropdownListPreferredItemHeight"
+            android:background="@drawable/spinner_bg"
+            android:popupBackground="@android:color/white"
+            android:paddingRight="14dp"
+            android:stateListAnimator="@drawable/spinner_sla"
+            android:popupElevation="3dp" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

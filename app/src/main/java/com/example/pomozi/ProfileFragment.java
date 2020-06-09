@@ -22,9 +22,11 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -91,6 +93,7 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
     private boolean edit_mode =false;
     private StorageTask<UploadTask.TaskSnapshot> mUploadTask;
     private User user_dohvaceno;
+    private Switch aSwitch;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -111,6 +114,18 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
         logout=view.findViewById(R.id.logout);
         edit_profile=view.findViewById(R.id.edit_profile);
         upload=view.findViewById(R.id.uplodaj_profil);
+        aSwitch=view.findViewById(R.id.prati_not);
+        aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Log.d("ProfileF","On");
+                } else {
+                    Log.d("ProfileF","Off");
+                    // The toggle is disabled
+                }
+            }
+        });
         if(getArguments()==null){
             //ne dolazimo s stranice zivotinje, ali smo registrirani,prikazi nam nas profil
             Log.d("onViewCre::","Argumentnull");

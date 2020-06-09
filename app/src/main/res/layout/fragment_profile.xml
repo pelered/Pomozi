@@ -33,10 +33,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:orientation="vertical"
                 android:layout_weight="0.65"
                 android:gravity="center"
-                >
+                android:orientation="vertical">
 
                 <EditText
                     android:id="@+id/username"
@@ -51,8 +50,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/email"
@@ -75,8 +74,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <EditText
                         android:id="@+id/tel_broj"
@@ -140,9 +139,9 @@
                     android:layout_width="25dp"
                     android:layout_height="26dp"
                     android:layout_gravity="top|end"
-                    android:src="@drawable/ic_mode_edit"
                     android:background="@drawable/buttona"
                     android:gravity="top|end"
+                    android:src="@drawable/ic_mode_edit"
                     android:textSize="15sp"
                     android:textStyle="normal" />
 
@@ -169,8 +168,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
                         android:layout_marginBottom="5dp"
-                        android:src="@drawable/ic_log_out"
                         android:background="@drawable/buttona"
+                        android:src="@drawable/ic_log_out"
 
                         android:textStyle="normal" />
                 </LinearLayout>
@@ -179,6 +178,12 @@
 
 
         </LinearLayout>
+
+        <Switch
+            android:id="@+id/prati_not"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Notifikacije za praćenje" />
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
