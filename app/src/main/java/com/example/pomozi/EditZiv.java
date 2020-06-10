@@ -297,7 +297,7 @@ public class EditZiv extends Fragment {
             if (dohvaceno.getVrsta().equals("Pas")) {
                 RadioButton id = vi.findViewById(R.id.pas);
                 id.setChecked(true);
-            } else if (dohvaceno.getVrsta().equals("Macka")) {
+            } else if (dohvaceno.getVrsta().equals("MaČka")) {
                 RadioButton id = vi.findViewById(R.id.macka);
                 id.setChecked(true);
             }else if (dohvaceno.getVrsta().equals("Zec")) {
@@ -314,7 +314,6 @@ public class EditZiv extends Fragment {
     }
     //uplodamo slike i dohvacamorl njihov
     private void uploadFile() {
-        Log.d("upload","Tusam");
         //dohvaca se trenutno prikazan popis slika
         slike_ucitavanje=adapter.getList();
         //da spremimo u hasmapu s hashem vec ucitane slike
@@ -357,8 +356,8 @@ public class EditZiv extends Fragment {
                 }else{
                     mUploadTask = fileReference.putFile(Image);
                 }
-                Log.d("EditZiv2",fileReference.toString());
-                Log.d("EditZiv3",mUploadTask.toString());
+                //Log.d("EditZiv2",fileReference.toString());
+                //Log.d("EditZiv3",mUploadTask.toString());
                 // Register observers to listen for when the download is done or if it fails
                 mUploadTask.addOnFailureListener(exception -> Toast.makeText(getActivity(), "Upload nije uspio " + exception.toString(), Toast.LENGTH_LONG).show())
                         .addOnSuccessListener(taskSnapshot -> {
@@ -372,13 +371,12 @@ public class EditZiv extends Fragment {
                     }).addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Uri downloadUri = task.getResult();
-                            Log.d("Upload()uploads ", String.valueOf(count));
                             //spremam u hash mapu
                             assert downloadUri != null;
                             //sprema se link novo spremljenih slika u bazi
                             slike_iz_baze.put(ImageList_key.get(count).toString(),downloadUri.toString());
                             count++;
-                            Toast.makeText(getActivity(), "Upload.Dohvacen url: "+count, Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), "Upload slike "+count, Toast.LENGTH_LONG).show();
 
                         } else {
                             Toast.makeText(getActivity(), "Upload nije uspio", Toast.LENGTH_LONG).show();
@@ -398,15 +396,7 @@ public class EditZiv extends Fragment {
 
         new Handler().postDelayed(() -> dodaj_u_bazu_podataka(vec_ucitane,slike_iz_baze), 10000);
     }
-    private String getFileExtension(String url) {
-        String type = null;
-        String extension = MimeTypeMap.getFileExtensionFromUrl(url);
-        Log.d("upload",extension);
-        if (extension != null) {
-            type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-        }
-        return type;
-    }
+
     private static String getFileExtension(File file) {
         String fileName = file.getName();
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
@@ -451,7 +441,7 @@ public class EditZiv extends Fragment {
         ZivUpload upload2 = new ZivUpload(id_vrsta.getText().toString(),id_stanje.getText().toString(),
                 id_status.getText().toString(),adres.getText().toString(),grad.getText().toString(),zupanija.getText().toString(),
                 opis.getText().toString(), id_korisnika,created_at,last_updated,slike_map);
-        //Log.d("azuriraj:",upload2.toString());
+        Log.d("azuriraj:",upload2.toString());
         Map<String, Object> postValues2=upload2.toMap();
 
         database= FirebaseDatabase.getInstance();
@@ -462,18 +452,22 @@ public class EditZiv extends Fragment {
         }else{
             key=oznaka_ziv;
         }
+
         if(!brisi_slike.isEmpty()) {
             for(int i=0;i<brisi_slike.size();i++) {
+
                 StorageReference storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(brisi_slike.get(i));
                 int finalI = i;
                 storageReference.delete().addOnSuccessListener(aVoid -> {
-                    //Toast.makeText(getContext(), "Slika izbrisana", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Slika izbrisana", Toast.LENGTH_SHORT).show();
+
                     if((finalI+1)==brisi_slike.size()) {
-                        //Log.d("dodajSliku_count:", String.valueOf(finalI));
 
                         mDatabaseRef.child(key).updateChildren(postValues2).addOnSuccessListener(aVoidd -> {
                             Toast.makeText(getContext(), "Uplodano/Ažurirano", Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE);
+                            //resetira se jer smo uplodali slike
+                            brisi_slike.clear();
                             PrikazZivFragment fragment=new PrikazZivFragment();
                             Bundle args = new Bundle();
                             //Log.d("PrikazZivvlas:",vlasnik.getText().toString());
@@ -511,8 +505,8 @@ public class EditZiv extends Fragment {
                 progressBar.setVisibility(View.INVISIBLE);
             });
         }
-        brisi_slike.clear();
-        //resetira se jer smo uplodali slike
+
+
 
     }
 
@@ -524,7 +518,7 @@ public class EditZiv extends Fragment {
             brisi_slike.add(adapter.getImage(pozicija));
         }
         adapter.deleteItem(pozicija);
-        adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
     }
     private void openFileChooser() {
         final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
