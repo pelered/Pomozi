@@ -159,7 +159,7 @@ public class ZivUpload {
         result.put("adresa",adresa);
         result.put("zupanija",zupanija);
         result.put("id_vlasnika",id_vlasnika);
-        result.put("datr",date);
+        result.put("date",date);
         result.put("last_date",last_date);
         result.put("url", url);
         return result;

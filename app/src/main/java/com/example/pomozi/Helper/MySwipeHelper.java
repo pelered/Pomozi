@@ -56,15 +56,12 @@ public abstract class MySwipeHelper extends ItemTouchHelper.SimpleCallback {
 private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d("KLIK6: ", String.valueOf(event));
         if(swipePosition < 0) return false;
         Point point= new Point((int) event.getRawX(),(int) event.getRawY());
-
         RecyclerView.ViewHolder swipeViewHolder= recyclerView.findViewHolderForAdapterPosition(swipePosition);
         View swipedItem= swipeViewHolder.itemView;
         Rect rect = new Rect();
         swipedItem.getGlobalVisibleRect(rect);
-
         if(event.getAction() == MotionEvent.ACTION_DOWN || event.getAction() == MotionEvent.ACTION_UP ||
         event.getAction() == MotionEvent.ACTION_MOVE)
         {
@@ -93,7 +90,6 @@ private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
         this.recyclerView.setOnTouchListener(onTouchListener);
         this.buttonBuffer= new HashMap<>();
         this.buttonWidth=buttonWidth;
-        Log.d("KLIK5: ", String.valueOf(context));
         removerQueue = new LinkedList<Integer>(){
 
             @Override
@@ -135,17 +131,13 @@ private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
             this.imageResId = imageResId;
             this.textSize = textSize;
             this.color = color;
-           /* this.pos = pos;
-            this.clickRegion = clickRegion;*/
             this.listener = listener;
             this.context = context;
             resources=context.getResources();
-            //Log.d("KLIK3: ", String.valueOf(context));
 
         }
 
         public boolean onClick(float x,float y){
-            Log.d("KLIKKlik: ", String.valueOf(x));
             if(clickRegion!=null && clickRegion.contains(x,y)) {
                 listener.onClick(pos);
                 return true;
@@ -202,7 +194,6 @@ private View.OnTouchListener onTouchListener= new View.OnTouchListener() {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         int pos= viewHolder.getAdapterPosition();
-        Log.d("KLIK4: ", String.valueOf(pos));
         if(swipePosition !=pos){
             removerQueue.add(swipePosition);
         }

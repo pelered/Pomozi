@@ -29,36 +29,47 @@
 
         </com.google.android.gms.common.SignInButton>
 
-        <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="256dp"
+            android:layout_marginTop="20dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email_log"
             android:layout_width="256dp"
+            android:paddingBottom="20dp"
             android:layout_height="wrap_content"
-
             android:layout_gravity="center"
             android:gravity="center"
             android:hint="@string/email"
             android:inputType="textEmailAddress" />
-
-        <EditText
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="256dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:endIconMode="password_toggle"
+            android:layout_marginBottom="20dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            >
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/lozinka_log"
             android:layout_width="253dp"
             android:layout_height="wrap_content"
-
+            android:gravity="center"
             android:layout_gravity="center"
             android:hint="@string/lozinka"
+            android:paddingBottom="20dp"
             android:inputType="textPassword"
             android:autofillHints="" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:text="@string/poka_i_lozinku" />
 
         <Button
+
             android:id="@+id/log"
-            android:layout_width="78dp"
+            android:layout_width="wrap_content"
             android:layout_height="35dp"
 
             android:layout_gravity="center"

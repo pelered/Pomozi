@@ -51,20 +51,6 @@ public class User
         this.tel_broj = tel_broj;
     }
 
-    public User(String uid, String ime, String url, String email, String grad, String zupanija) {
-        this.uid = uid;
-        this.ime = ime;
-        this.url = url;
-        this.email= email;
-        this.grad = grad;
-        this.zupanija = zupanija;
-    }
-    public User(String uid,String ime, String url, String email) {
-        this.uid = uid;
-        this.ime = ime;
-        this.url = url;
-        this.email= email;
-    }
 
     public User() {
     }

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.example.pomozi.ui.home.HomeFragment"
+        android:name="com.example.pomozi.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home">
 
@@ -30,14 +30,18 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
+        android:id="@+id/dodaj_objavu"
         android:name="com.example.pomozi.LoginFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_login" />
-
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.pomozi.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/editZiv"
+        android:name="com.example.pomozi.EditZiv"
+        android:label="fragment_edit_ziv"
+        tools:layout="@layout/fragment_edit_ziv" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.pomozi.ProfileFragment"
+        android:label="ProfileFragment" />
+
 </navigation>

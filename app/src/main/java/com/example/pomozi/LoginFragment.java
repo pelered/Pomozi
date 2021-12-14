@@ -7,10 +7,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +23,8 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.pomozi.Model.User;
 import com.example.pomozi.R;
 import com.example.pomozi.RegisterFragment;
@@ -49,6 +54,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.EventListener;
 import java.util.Map;
 import java.util.Objects;
 
@@ -69,6 +75,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     private FirebaseDatabase database;
     private Button login;
     private User user_dohvati;
+    private ImageView profile_photo;
 
 
 
@@ -94,7 +101,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(Objects.requireNonNull(getActivity()), gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(requireActivity(), gso);
 
 
         reg=view.findViewById(R.id.reg);
@@ -136,81 +143,138 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null){
             //updateUI(currentUser);
-            FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new ProfileFragment());
             ft.commit();
         }
     }
     private void updateUI(FirebaseUser user) {
+        if(user!=null) {
+            //Log.d("Probam3 :", String.valueOf(user));
+            User user1;
+            String username = null;
+            if (user.getDisplayName() == null) {
+                //username=naziv;
+            } else {
+                username = user.getDisplayName();
+            }
+            String url = null;
+            //profilePicUrl="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
+            if (profilePicUrl == null) {
+                if (user.getPhotoUrl() != null) {
+                    url = user.getPhotoUrl().toString();
+                }
+            } else {
+                url = profilePicUrl;
+            }
+            String email = user.getEmail();
+            String uid = user.getUid();
+            user1 = new User(uid, username, url, "", "", "", email, "");
+            Task<Void> mDatabaseRef;
+            Map<String, Object> postValues2 = user1.toMap();
+            if (FirebaseDatabase.getInstance().getReference("Kor").child(uid) == null) {
+                //Log.d("LoginF:", String.valueOf(FirebaseDatabase.getInstance().getReference("Kor").child(uid)));
+                mDatabaseRef = FirebaseDatabase.getInstance().getReference("Kor").child(uid).updateChildren(postValues2);
+                String finalUsername = username;
+                String finalUrl = url;
+                mDatabaseRef.addOnSuccessListener(aVoid -> {
+                    SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("email", email);
+                    editor.putString("username", finalUsername);
+                    editor.putString("uid", uid);
+                    editor.putBoolean("hasLogin", true);
+                    editor.putString("url", user1.getUrl());
+                    editor.apply();
+                    NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+                    View headerView = navigationView.getHeaderView(0);
+                    ime_nav = headerView.findViewById(R.id.ime_navigation);
+                    email_nav = headerView.findViewById(R.id.email_navigation);
+                    ime_nav.setText(finalUsername);
+                    email_nav.setText(email);
+                    profile_photo=headerView.findViewById(R.id.imageViewprofile);
+                    log=headerView.findViewById(R.id.log_in);
+                    log.setText(R.string.log_out);
+                    Menu menu=navigationView.getMenu();
+                    MenuItem item =menu.findItem(R.id.dodaj_objavu);
+                    item.setVisible(true);
+                    item =menu.findItem(R.id.ispis_objava);
+                    item.setVisible(true);
+                    item =menu.findItem(R.id.moj_profil);
+                    item.setVisible(true);
+                    if(finalUrl !=null){
+                        Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
+                    }
+                    ProfileFragment fragment=new ProfileFragment();
 
-        Log.d("Probam3 :", String.valueOf(user));
-        User user1;
-        String username = null;
-        if(user.getDisplayName()==null){
-            //username=naziv;
-        }else{
-            username=user.getDisplayName();
-        }
-        String url = null;
-        //profilePicUrl="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
-        if(profilePicUrl==null){
-            if(user.getPhotoUrl()!=null) {
-                url = user.getPhotoUrl().toString();
+                    FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.nav_host_fragment, fragment);
+                    ft.commit();
+                }).addOnFailureListener(e -> Log.d("Neuspjel ", "upload"));
+            } else if (FirebaseDatabase.getInstance().getReference("Kor").child(uid) != null || user_dohvati != null) {
+                String finalUrl1 = url;
+                FirebaseDatabase.getInstance().getReference("Kor").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        User privremeni_user;
+                        privremeni_user=dataSnapshot.getValue(User.class);
+                        SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        String finalUrl = finalUrl1;
+                        String uid_pri = user_dohvati.getUid();
+                        editor.putString("email", user_dohvati.getEmail());
+                        editor.putString("username", user_dohvati.getIme());
+                        editor.putString("uid", uid_pri);
+                        editor.putBoolean("hasLogin", true);
+                        editor.putString("url", user_dohvati.getUrl());
+                        editor.putString("grad",privremeni_user.getGrad());
+                        editor.putString("zupanija",privremeni_user.getZupanija());
+                        editor.putString("tel_broj",privremeni_user.getTel_broj());
+                        editor.putString("add",privremeni_user.getAdd());
+                        editor.apply();
+                        SharedPreferences prefss = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+                        View headerView = navigationView.getHeaderView(0);
+                        ime_nav = headerView.findViewById(R.id.ime_navigation);
+                        email_nav = headerView.findViewById(R.id.email_navigation);
+                        ime_nav.setText(user_dohvati.getIme());
+                        email_nav.setText(user_dohvati.getEmail());
+                        profile_photo=headerView.findViewById(R.id.imageViewprofile);
+                        log=headerView.findViewById(R.id.log_in);
+                        log.setText(R.string.log_out);
+                        Menu menu=navigationView.getMenu();
+                        MenuItem item =menu.findItem(R.id.dodaj_objavu);
+                        item.setVisible(true);
+                        item =menu.findItem(R.id.ispis_objava);
+                        item.setVisible(true);
+                        item =menu.findItem(R.id.moj_profil);
+                        item.setVisible(true);
+                        //Log.d("LoginF:",finalUrl);
+                        //Log.d("LoginF1:", String.valueOf(profile_photo));
+                        if(finalUrl!=null){
+                            Glide.with(getActivity()).load(finalUrl).apply(RequestOptions.circleCropTransform()).into(profile_photo);
+                        }
+
+                        ProfileFragment fragment=new ProfileFragment();
+                        //Bundle args = new Bundle();
+                        //args.putString("login", "log");
+                        //fragment.setArguments(args);
+                        FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
+                        ft.replace(R.id.nav_host_fragment, fragment);
+                        ft.commit();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
         }else{
-            url=profilePicUrl;
-        }
-        String email=user.getEmail();
-        String uid=user.getUid();
-
-        user1=new User(uid,username,url,email);
-        Task<Void> mDatabaseRef;
-        Map<String, Object> postValues2=user1.toMap();
-        if(FirebaseDatabase.getInstance().getReference("Kor").child(uid)==null) {
-            mDatabaseRef = FirebaseDatabase.getInstance().getReference("Kor").child(uid).updateChildren(postValues2);
-            String finalUsername = username;
-            mDatabaseRef.addOnSuccessListener(aVoid -> {
-                Log.d("Uspjel ", "upload");
-                SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("email", email);
-                editor.putString("username", finalUsername);
-                editor.putString("uid", uid);
-                editor.putBoolean("hasLogin", true);
-                editor.putString("url", user1.getUrl());
-                Log.d("updateUser()1", user1.toString());
-                editor.apply();
-                NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
-                View headerView = navigationView.getHeaderView(0);
-                ime_nav = headerView.findViewById(R.id.ime_navigation);
-                email_nav = headerView.findViewById(R.id.email_navigation);
-                ime_nav.setText(finalUsername);
-                email_nav.setText(email);
-                //image with glide
-                FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.nav_host_fragment, new ProfileFragment());
-                //ft.addToBackStack("tag_back2");
-                ft.commit();
-            }).addOnFailureListener(e -> Log.d("Neuspjel ", "upload"));
-        }else if(FirebaseDatabase.getInstance().getReference("Kor").child(uid)!=null || user_dohvati!=null){
-            SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString("email", user_dohvati.getEmail());
-            editor.putString("username", user_dohvati.getIme());
-            editor.putString("uid", user_dohvati.getUid());
-            editor.putBoolean("hasLogin", true);
-            editor.putString("url", user_dohvati.getUrl());
-            Log.d("updateUser()1", user1.toString());
-            editor.apply();
-            NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
-            View headerView = navigationView.getHeaderView(0);
-            ime_nav = headerView.findViewById(R.id.ime_navigation);
-            email_nav = headerView.findViewById(R.id.email_navigation);
-            ime_nav.setText(user_dohvati.getIme());
-            email_nav.setText(user_dohvati.getEmail());
-            //image with glide
-            FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.nav_host_fragment, new ProfileFragment());
+            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.nav_host_fragment, new LoginFragment());
             ft.commit();
         }
     }
@@ -219,7 +283,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
         if(v.equals(googleSignInButton)){
             signIn();
         }else if(v.equals(reg)){
-            FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+            FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.nav_host_fragment, new RegisterFragment());
             ft.addToBackStack("log_frag");
             ft.commit();
@@ -237,24 +301,26 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     //facebook
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d("TAG", "handleFacebookAccessToken:" + token);
-
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("Tag", "signInWithCredential:success");
-                        //Log.d("Tagfacebook" +                                    "1", token.getUserId().toString());;
-                        //Log.d("Tagfacebook" +                                    "2", String.valueOf(task.getResult().getUser().getPhotoUrl()));
-                        //Log.d("Tagfacebook" +                                    "3", task.getResult().getAdditionalUserInfo().getProfile().toString());;
                         FirebaseUser user = mAuth.getCurrentUser();
+                        user_dohvati=new User();
+                        user_dohvati.setEmail(user.getEmail());
+                        user_dohvati.setUid(user.getUid());
+                        user_dohvati.setIme(user.getDisplayName());
                         assert user != null;
                         Log.d("Taguser", user.toString());
                         try {
                             profilePicUrl="https://graph.facebook.com/"+token.getUserId()+"/picture?type=large";
+                            user_dohvati.setUrl(profilePicUrl);
                             Log.d("Facebook:slika",profilePicUrl);
                         }catch (Exception e)
                         {
+                            user_dohvati.setUrl(user.getPhotoUrl().toString());
                             Log.d("Facebook:error:catch", Objects.requireNonNull(e.getMessage()));
                         }
                         updateUI(user);
@@ -267,17 +333,24 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
                         updateUI(null);
                     }
                 });
-    }
+        }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("Tag", "firebaseAuthWithGoogle:" + acct.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("Tag", "signInWithCredential:success");
                         FirebaseUser user = mAuth.getCurrentUser();
+                        user_dohvati=new User();
+                        assert user != null;
+                        user_dohvati.setUid(user.getUid());
+                        user_dohvati.setEmail(user.getEmail());
+                        user_dohvati.setIme(user.getDisplayName());
+                        user_dohvati.setUrl(user.getPhotoUrl().toString());
                         updateUI(user);
                     } else {
                         // If sign in fails, display a message to the user.
@@ -290,7 +363,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener{
     public void log() {
 
         mAuth.signInWithEmailAndPassword(email.getText().toString(), lozinka.getText().toString())
-                .addOnCompleteListener(Objects.requireNonNull(getActivity()), task -> {
+                .addOnCompleteListener(requireActivity(), task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
                         Log.d("log s emailom i pass", "signInWithEmail:success");

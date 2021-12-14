@@ -16,6 +16,8 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
@@ -37,11 +39,11 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.List;
 import java.util.Objects;
 
-public class RegisterFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class RegisterFragment extends Fragment implements View.OnClickListener{
     private String TAG = "Tag";
 
     private Button reg;
-    private AppCompatCheckBox checkbox;
+
     private EditText ime,email,lozinka,potvrda,tel_broj;
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
@@ -63,11 +65,12 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         lozinka=view.findViewById(R.id.lozinka);
         potvrda=view.findViewById(R.id.potvrdi);
         tel_broj=view.findViewById(R.id.broj);
-        checkbox=view.findViewById(R.id.checkbox);
-        checkbox.setOnCheckedChangeListener(this);
+
         ime=view.findViewById(R.id.naziv);
         reg=view.findViewById(R.id.button2);
         reg.setOnClickListener(this);
+
+
 
         grad=view.findViewById(R.id.grad);
         grad.setAdapter(new PlaceAutoSuggestAdapter(getActivity(),android.R.layout.simple_list_item_1));
@@ -175,7 +178,7 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         }
         String email=user.getEmail();
         String uid=user.getUid();
-        SharedPreferences prefs = Objects.requireNonNull(getContext()).getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        SharedPreferences prefs = requireContext().getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("email",email);
         editor.putString("username", username);
@@ -186,39 +189,42 @@ public class RegisterFragment extends Fragment implements View.OnClickListener, 
         editor.putString("url","");
         editor.putString("add",user_up.getAdd());
         editor.putBoolean("hasLogin",true);
+        Log.d("onClick::",editor.toString());
         editor.apply();
         NavigationView navigationView =getActivity().findViewById(R.id.nav_view);
         View headerView = navigationView.getHeaderView(0);
         ime_nav=headerView.findViewById(R.id.ime_navigation);
         email_nav=headerView.findViewById(R.id.email_navigation);
+        log=headerView.findViewById(R.id.log_in);
+        log.setText(R.string.log_out);
         ime_nav.setText(username);
         email_nav.setText(email);
-
-
+        Menu menu=navigationView.getMenu();
+        MenuItem item =menu.findItem(R.id.dodaj_objavu);
+        item.setVisible(true);
+        item =menu.findItem(R.id.ispis_objava);
+        item.setVisible(true);
+        item =menu.findItem(R.id.moj_profil);
+        item.setVisible(true);
         //image with glide
-        FragmentTransaction ft = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
+        FragmentTransaction ft = requireActivity().getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.nav_host_fragment, new ProfileFragment());
         ft.commit();
 
     }
-    @Override
-    public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-        if (isChecked) {
-            // show password
-            lozinka.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-            potvrda.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-        } else {
-            // hide password
-            lozinka.setTransformationMethod(PasswordTransformationMethod.getInstance());
-            potvrda.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
-        }
-    }
+
     public boolean provjeri(){
-        if(!(lozinka.getText().toString().equals(potvrda.getText().toString()))){
-            Toast.makeText(getActivity(),"Lozinke nisu iste",Toast.LENGTH_LONG).show();
-            return false;
+        //Log.d("Register:", String.valueOf(lozinka.getText().toString().trim().length()));
+        if(!(lozinka.getText().toString().trim().length() < 6)) {
+            if (!(lozinka.getText().toString().equals(potvrda.getText().toString()))) {
+                Toast.makeText(getActivity(), "Lozinke nisu iste", Toast.LENGTH_LONG).show();
+                return false;
+            } else {
+                return true;
+            }
         }else{
-            return true;
+            Toast.makeText(getActivity(), "Lozinka mora imati minimun 6 znakova", Toast.LENGTH_LONG).show();
+            return false;
         }
     }
     private LatLng getLatLngFromAddress(String address){

@@ -1,113 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
     tools:context=".RegisterFragment">
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top|center"
+        android:gravity="center"
         android:orientation="vertical"
         android:paddingTop="10dp"
         android:paddingBottom="10dp">
 
-        <EditText
-            android:id="@+id/naziv"
-            android:text=""
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:gravity="center"
+            android:layout_gravity="center"
             android:hint="@string/ime_i_prezime"
-            android:inputType="text"
-            android:paddingBottom="20dp" />
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <AutoCompleteTextView
-            android:text=""
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/naziv"
+                android:layout_width="308dp"
+                android:layout_height="wrap_content"
+                android:autofillHints=""
+                android:gravity="center"
+                android:inputType="text"
+                android:paddingBottom="20dp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            android:id="@+id/autocomplete"
-            android:layout_width="300dp"
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:layout_gravity="center"
             android:hint="@string/adresa"
-            android:paddingBottom="10dp" />
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-        <AutoCompleteTextView
-            android:text=""
+            <com.google.android.material.textview.MaterialAutoCompleteTextView
+                android:id="@+id/autocomplete"
+                android:layout_width="308dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingBottom="20dp"
+                android:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="@string/grad"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textview.MaterialAutoCompleteTextView
             android:id="@+id/grad"
-            android:layout_width="wrap_content"
+            android:layout_width="308dp"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:paddingBottom="20dp"
             android:gravity="center"
-            android:hint="@string/grad" />
-
-        <AutoCompleteTextView
-            android:text=""
-
-            android:id="@+id/zupanija"
+            android:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:gravity="center"
+            android:layout_gravity="center"
             android:hint="@string/upanija"
-
-            />
-
-        <EditText
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textview.MaterialAutoCompleteTextView
+            android:id="@+id/zupanija"
+            android:layout_width="308dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:paddingBottom="20dp"
+            android:gravity="center"
             android:text=""
-
-            android:id="@+id/broj"
+            />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="@string/broj_mobitela"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/broj"
+            android:layout_width="308dp"
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:ems="10"
             android:gravity="center"
-            android:hint="@string/broj_mobitela"
-            android:inputType="number|textPersonName" />
-
-        <EditText
-            android:text=""
-
-            android:id="@+id/email"
+            android:inputType="number|textPersonName"
+            android:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autofillHints=""
+            android:layout_gravity="center"
             android:hint="@string/email"
+
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/email"
+            android:layout_width="308dp"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:gravity="center"
             android:inputType="textEmailAddress"
-            android:paddingBottom="20dp" />
-
-        <EditText
-            android:id="@+id/lozinka"
+            android:paddingBottom="20dp"
+            android:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:autofillHints=""
+            android:layout_gravity="center"
             android:hint="@string/lozinka_min_6_znakova"
-            android:inputType="textPassword"
-            android:paddingBottom="20dp" />
+            app:endIconMode="password_toggle"
 
-        <EditText
-            android:text=""
-
-            android:id="@+id/potvrdi"
-            android:layout_width="wrap_content"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/lozinka"
+            android:layout_width="308dp"
             android:layout_height="wrap_content"
             android:autofillHints=""
-            android:hint="@string/potvrdi_lozinku"
+            android:gravity="center"
             android:inputType="textPassword"
-            android:paddingBottom="20dp" />
 
-        <androidx.appcompat.widget.AppCompatCheckBox
-            android:id="@+id/checkbox"
-            android:layout_width="134dp"
-            android:layout_height="38dp"
-            android:text="@string/poka_i_lozinku" />
+            android:paddingBottom="20dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:hint="@string/potvrdi_lozinku"
+            app:endIconMode="password_toggle"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <EditText
+            android:id="@+id/potvrdi"
+
+            android:layout_width="308dp"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+
+            android:gravity="center"
+            android:inputType="textPassword"
+            android:paddingBottom="20dp"
+            android:text="" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/button2"
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/registriraj" />

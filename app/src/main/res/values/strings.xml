@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Pomozi</string>
+    <string name="app_name">Izgubljeni ljubimci</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -44,5 +44,22 @@
     <string name="zec">Zec</string>
     <string name="drugo">Drugo</string>
     <string name="opis">Opis</string>
+    <string name="stanje">Stanje</string>
+    <string name="vlasnik">Vlasnik</string>
+    <string name="status">Status</string>
+    <string name="vrsta">vrsta</string>
+    <string name="datum">Datum</string>
+    <string name="zupanija">Zupanija</string>
+    <string name="pretra_i">Pretraži</string>
+    <string name="Stanjecard">\"Stanje: \"</string>
+    <string name="slike">Slike</string>
+    <string name="video">Video</string>
+    <string name="po_etna">Početna</string>
+    <string name="nova_objava">Nova objava</string>
+    <string name="moje_objave">Moje objave</string>
+    <string name="moj_profil">Moj profil</string>
+    <string name="upanija_z">Županija:</string>
+    <string name="a_urirano_z">Ažurirano:</string>
+
 
 </resources>
